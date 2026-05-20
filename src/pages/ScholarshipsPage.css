@@ -1,0 +1,373 @@
+/* ===== Scholarships Page ===== */
+.sch-page__hero {
+    padding: calc(64px + var(--spacing-10)) 0 var(--spacing-8);
+    background: var(--color-white);
+}
+
+.sch-page__hero-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-8);
+}
+
+.sch-page__title {
+    font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
+    font-weight: 800;
+    color: var(--color-gray-900);
+    letter-spacing: -0.03em;
+}
+
+.sch-page__subtitle {
+    margin-top: var(--spacing-3);
+    font-size: var(--font-size-base);
+    color: var(--color-gray-500);
+    max-width: 540px;
+    line-height: 1.7;
+}
+
+.sch-page__ort-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-5);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.sch-page__ort-icon {
+    font-size: var(--font-size-2xl);
+}
+
+.sch-page__ort-banner strong {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-gray-900);
+}
+
+.sch-page__ort-banner span {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-500);
+}
+
+.sch-page__ort-btn {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-white);
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+}
+
+.sch-page__ort-btn:hover {
+    background: var(--color-primary-hover);
+}
+
+/* ===== Controls ===== */
+.sch-page__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-8);
+    flex-wrap: wrap;
+}
+
+.sch-page__search {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    flex: 1;
+    min-width: 280px;
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-xl);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.sch-page__search:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: var(--color-white);
+}
+
+.sch-page__search svg {
+    color: var(--color-gray-400);
+    flex-shrink: 0;
+}
+
+.sch-page__search input {
+    flex: 1;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-800);
+    background: transparent;
+}
+
+.sch-page__search input::placeholder {
+    color: var(--color-gray-400);
+}
+
+.sch-page__dropdowns {
+    display: flex;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+}
+
+.sch-page__dropdown {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-700);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.sch-page__dropdown:hover {
+    border-color: var(--color-gray-300);
+}
+
+.sch-page__dropdown--icon {
+    font-weight: 600;
+    color: var(--color-gray-800);
+}
+
+/* ===== List ===== */
+.sch-page__list {
+    padding: var(--spacing-8) 0 var(--spacing-16);
+}
+
+.sch-page__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-6);
+}
+
+/* ===== Scholarship Card ===== */
+.sch-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+}
+
+.sch-card:hover {
+    border-color: var(--color-gray-200);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.sch-card__image {
+    position: relative;
+    height: 140px;
+    padding: var(--spacing-3);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.sch-card__country {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: 4px 10px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-white);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-full);
+}
+
+.sch-card__bookmark {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.sch-card__bookmark:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.sch-card__bookmark--active {
+    background: rgba(37, 99, 235, 0.7);
+}
+
+.sch-card__body {
+    padding: var(--spacing-5);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.sch-card__tags {
+    display: flex;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
+    flex-wrap: wrap;
+}
+
+.sch-card__tag {
+    padding: 3px 10px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    border-radius: var(--radius-full);
+}
+
+.sch-card__tag--type {
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.sch-card__tag--success {
+    color: #059669;
+    background: #ECFDF5;
+}
+
+.sch-card__tag--warning {
+    color: #D97706;
+    background: #FFFBEB;
+}
+
+.sch-card__tag--info {
+    color: #2563EB;
+    background: #DBEAFE;
+}
+
+.sch-card__name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.sch-card__desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-4);
+    flex: 1;
+}
+
+.sch-card__meta-row {
+    display: flex;
+    gap: var(--spacing-6);
+    padding: var(--spacing-3) 0;
+    border-top: 1px solid var(--color-gray-100);
+}
+
+.sch-card__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sch-card__meta-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sch-card__meta-value {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-800);
+}
+
+.sch-card__meta-value--urgent {
+    color: #DC2626;
+}
+
+.sch-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--spacing-3);
+    padding-top: var(--spacing-3);
+}
+
+.sch-card__status {
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+}
+
+.sch-card__status--danger {
+    color: #DC2626;
+    font-weight: 500;
+}
+
+.sch-card__view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+    transition: gap var(--transition-fast);
+    cursor: pointer;
+}
+
+.sch-card__view-btn:hover {
+    gap: var(--spacing-2);
+}
+
+/* ===== Empty ===== */
+.sch-page__empty {
+    text-align: center;
+    padding: var(--spacing-16) 0;
+    color: var(--color-gray-400);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+    .sch-page__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sch-page__hero-content {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .sch-page__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sch-page__controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sch-page__dropdowns {
+        overflow-x: auto;
+    }
+}

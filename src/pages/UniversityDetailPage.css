@@ -1,0 +1,713 @@
+/* ===== University Detail Page ===== */
+.unidet-page {
+    padding-top: 64px;
+}
+
+/* ===== Banner ===== */
+.unidet-banner {
+    padding: var(--spacing-10) 0 var(--spacing-8);
+    color: white;
+    position: relative;
+}
+
+.unidet-banner__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-6);
+    flex-wrap: wrap;
+}
+
+.unidet-banner__logo {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.unidet-banner__info {
+    flex: 1;
+}
+
+.unidet-banner__name {
+    font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.unidet-banner__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+}
+
+.unidet-banner__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.unidet-banner__badges {
+    display: flex;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+}
+
+.unidet-banner__badge {
+    padding: 4px 12px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Tabs ===== */
+.unidet-tabs {
+    border-bottom: 1px solid var(--color-gray-200);
+    background: var(--color-white);
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+}
+
+.unidet-tabs__inner {
+    display: flex;
+    gap: 0px;
+    overflow-x: auto;
+}
+
+.unidet-tabs__tab {
+    padding: var(--spacing-4) var(--spacing-5);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-500);
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.unidet-tabs__tab:hover {
+    color: var(--color-gray-700);
+}
+
+.unidet-tabs__tab--active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* ===== Content Layout ===== */
+.unidet-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--spacing-8);
+    padding-top: var(--spacing-8);
+    padding-bottom: var(--spacing-16);
+    align-items: start;
+}
+
+/* ===== Sections ===== */
+.unidet-section {
+    margin-bottom: var(--spacing-10);
+}
+
+.unidet-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+}
+
+.unidet-section__title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-4);
+    letter-spacing: -0.01em;
+}
+
+.unidet-section__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.8;
+}
+
+.unidet-intake-badge {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    font-weight: 500;
+}
+
+/* ===== Stats ===== */
+.unidet-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-6);
+}
+
+.unidet-stat {
+    padding: var(--spacing-4);
+    background: var(--color-primary-50);
+    border-radius: var(--radius-xl);
+    text-align: center;
+}
+
+.unidet-stat__value {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.unidet-stat__label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-gray-500);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+}
+
+/* ===== Requirement Cards ===== */
+.unidet-req-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-4);
+}
+
+.unidet-req-card {
+    padding: var(--spacing-5);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    transition: box-shadow var(--transition-normal);
+}
+
+.unidet-req-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.unidet-req-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-3);
+}
+
+.unidet-req-card__title {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-1);
+}
+
+.unidet-req-card__desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+    margin-bottom: var(--spacing-3);
+}
+
+.unidet-req-card__min {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* ===== Table ===== */
+.unidet-table {
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.unidet-table__head {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    padding: var(--spacing-3) var(--spacing-5);
+    background: var(--color-gray-50);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-gray-400);
+    letter-spacing: 0.05em;
+}
+
+.unidet-table__row {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    padding: var(--spacing-4) var(--spacing-5);
+    border-top: 1px solid var(--color-gray-100);
+    font-size: var(--font-size-sm);
+    transition: background var(--transition-fast);
+}
+
+.unidet-table__row:hover {
+    background: var(--color-gray-50);
+}
+
+.unidet-table__program {
+    font-weight: 600;
+    color: var(--color-gray-800);
+}
+
+.unidet-table__subject {
+    color: var(--color-gray-500);
+}
+
+.unidet-table__score {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* ===== Accordion ===== */
+.unidet-accordion {
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-3);
+    overflow: hidden;
+}
+
+.unidet-accordion__trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    padding: var(--spacing-4) var(--spacing-5);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-800);
+    transition: background var(--transition-fast);
+    cursor: pointer;
+    text-align: left;
+}
+
+.unidet-accordion__trigger span {
+    flex: 1;
+}
+
+.unidet-accordion__trigger svg:first-child {
+    color: var(--color-gray-400);
+}
+
+.unidet-accordion__trigger svg:last-child {
+    color: var(--color-gray-400);
+}
+
+.unidet-accordion__trigger:hover {
+    background: var(--color-gray-50);
+}
+
+.unidet-accordion__trigger--open {
+    background: var(--color-gray-50);
+}
+
+.unidet-accordion__content {
+    padding: 0 var(--spacing-5) var(--spacing-5);
+}
+
+.unidet-accordion__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+    border-bottom: 1px solid var(--color-gray-50);
+}
+
+.unidet-accordion__item:last-child {
+    border-bottom: none;
+}
+
+.unidet-accordion__check {
+    color: var(--color-success);
+    flex-shrink: 0;
+}
+
+/* ===== Tuition Card ===== */
+.unidet-tuition-card {
+    padding: var(--spacing-6);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+}
+
+.unidet-tuition-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-6);
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+}
+
+.unidet-tuition-card__badge {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: #D97706;
+    background: #FFFBEB;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+}
+
+.unidet-tuition-card__body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-8);
+}
+
+.unidet-tuition-card__label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-gray-400);
+    letter-spacing: 0.05em;
+}
+
+.unidet-tuition-card__amount {
+    font-size: var(--font-size-4xl);
+    font-weight: 800;
+    color: var(--color-gray-900);
+    margin-top: var(--spacing-1);
+}
+
+.unidet-tuition-card__amount span {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--color-gray-400);
+}
+
+.unidet-tuition-card__note {
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+    margin-top: var(--spacing-1);
+}
+
+.unidet-tuition-card__right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.unidet-tuition-card__aid-item h4 {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-gray-800);
+    margin-bottom: 2px;
+}
+
+.unidet-tuition-card__aid-item p {
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-500);
+    line-height: 1.6;
+}
+
+/* ===== FAQs ===== */
+.unidet-faqs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.unidet-faq {
+    border-bottom: 1px solid var(--color-gray-100);
+    padding-bottom: var(--spacing-4);
+}
+
+.unidet-faq:last-child {
+    border-bottom: none;
+}
+
+.unidet-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    text-align: left;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-800);
+    padding: var(--spacing-2) 0;
+    cursor: pointer;
+}
+
+.unidet-faq__question svg {
+    color: var(--color-gray-400);
+    flex-shrink: 0;
+}
+
+.unidet-faq__answer {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.7;
+    padding: var(--spacing-2) 0 var(--spacing-1);
+}
+
+/* ===== Sidebar ===== */
+.unidet-sidebar {
+    position: sticky;
+    top: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+}
+
+/* Apply Card */
+.unidet-apply-card {
+    padding: var(--spacing-6);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.unidet-apply-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-4);
+}
+
+.unidet-apply-card__status {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: #059669;
+}
+
+.unidet-apply-card__heart {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-gray-200);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.unidet-apply-card__heart:hover {
+    border-color: var(--color-gray-300);
+}
+
+.unidet-apply-card__heart--active {
+    background: #FEF2F2;
+    border-color: #FCA5A5;
+}
+
+.unidet-apply-card__title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-1);
+}
+
+.unidet-apply-card__desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    margin-bottom: var(--spacing-4);
+}
+
+.unidet-apply-card .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.unidet-apply-card__save {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-500);
+    transition: color var(--transition-fast);
+    cursor: pointer;
+}
+
+.unidet-apply-card__save:hover {
+    color: var(--color-gray-700);
+}
+
+/* Timeline Card */
+.unidet-timeline-card {
+    padding: var(--spacing-5);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+}
+
+.unidet-timeline-card__title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-5);
+}
+
+.unidet-timeline-card__title svg {
+    color: var(--color-primary);
+}
+
+.unidet-timeline-card__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+    position: relative;
+    padding-left: var(--spacing-5);
+}
+
+.unidet-timeline-card__list::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--color-gray-200);
+}
+
+.unidet-timeline-item {
+    display: flex;
+    gap: var(--spacing-3);
+    position: relative;
+}
+
+.unidet-timeline-item__dot {
+    position: absolute;
+    left: calc(-1 * var(--spacing-5) + 1px);
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 2px solid var(--color-white);
+    box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.unidet-timeline-item__date {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.02em;
+}
+
+.unidet-timeline-item__title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-800);
+    margin-top: 2px;
+}
+
+.unidet-timeline-item__desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+    margin-top: 2px;
+}
+
+/* Office Card */
+.unidet-office-card {
+    padding: var(--spacing-5);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+}
+
+.unidet-office-card__title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-gray-400);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-4);
+}
+
+.unidet-office-card__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+    margin-bottom: var(--spacing-3);
+}
+
+.unidet-office-card__item:last-child {
+    margin-bottom: 0;
+}
+
+.unidet-office-card__item a {
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: opacity var(--transition-fast);
+}
+
+.unidet-office-card__item a:hover {
+    opacity: 0.7;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+    .unidet-content {
+        grid-template-columns: 1fr;
+    }
+
+    .unidet-sidebar {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .unidet-sidebar>* {
+        flex: 1;
+        min-width: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .unidet-banner__inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .unidet-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .unidet-req-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .unidet-tuition-card__body {
+        grid-template-columns: 1fr;
+    }
+
+    .unidet-table__head,
+    .unidet-table__row {
+        font-size: var(--font-size-xs);
+    }
+
+    .unidet-sidebar {
+        flex-direction: column;
+    }
+
+    .unidet-tabs__inner {
+        overflow-x: auto;
+    }
+}

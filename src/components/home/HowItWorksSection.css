@@ -1,0 +1,106 @@
+.how-it-works {
+    background: var(--color-white);
+}
+
+.how-it-works__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-12);
+}
+
+.how-it-works__title {
+    font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl));
+    font-weight: 700;
+    color: var(--color-gray-900);
+    letter-spacing: -0.02em;
+}
+
+.how-it-works__subtitle {
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-base);
+    color: var(--color-gray-500);
+}
+
+.how-it-works__guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-primary);
+    white-space: nowrap;
+    transition: gap var(--transition-fast);
+    flex-shrink: 0;
+    margin-top: var(--spacing-2);
+}
+
+.how-it-works__guide-link:hover {
+    gap: var(--spacing-3);
+}
+
+.how-it-works__steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-8);
+}
+
+.how-it-works__step {
+    position: relative;
+}
+
+.how-it-works__step-number-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-6);
+}
+
+.how-it-works__step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.how-it-works__step-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-100));
+    margin-left: var(--spacing-3);
+    border-radius: 1px;
+}
+
+.how-it-works__step-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-3);
+}
+
+.how-it-works__step-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .how-it-works__header {
+        flex-direction: column;
+        gap: var(--spacing-4);
+    }
+
+    .how-it-works__steps {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-6);
+    }
+
+    .how-it-works__step-line {
+        display: none;
+    }
+}

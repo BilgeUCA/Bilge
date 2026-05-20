@@ -1,0 +1,695 @@
+/* ===== ORT Prep Page ===== */
+.ort-page {
+    padding-top: 64px;
+}
+
+/* ===== Sub Navigation Tabs ===== */
+.ort-page__tabs {
+    border-bottom: 1px solid var(--color-gray-100);
+    background: var(--color-white);
+    position: sticky;
+    top: 64px;
+    z-index: 50;
+}
+
+.ort-page__tabs-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    height: 48px;
+}
+
+.ort-page__tab {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-500);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.ort-page__tab:hover {
+    color: var(--color-gray-700);
+}
+
+.ort-page__tab--active {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.ort-page__tab--active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+}
+
+.ort-page__tabs-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+}
+
+.ort-page__lang-switcher {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    font-weight: 500;
+}
+
+/* ===== Layout ===== */
+.ort-page__layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-10);
+    padding-top: var(--spacing-8);
+    padding-bottom: var(--spacing-16);
+    align-items: start;
+}
+
+/* ===== Sidebar TOC ===== */
+.ort-toc {
+    position: sticky;
+    top: 130px;
+}
+
+.ort-toc__title {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-gray-400);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-4);
+}
+
+.ort-toc__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    margin-bottom: var(--spacing-8);
+}
+
+.ort-toc__link {
+    display: block;
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    text-align: left;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    border-left: 2px solid transparent;
+}
+
+.ort-toc__link:hover {
+    color: var(--color-gray-700);
+}
+
+.ort-toc__link--active {
+    color: var(--color-primary);
+    font-weight: 600;
+    border-left-color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.ort-toc__cta {
+    padding: var(--spacing-5);
+    background: linear-gradient(135deg, var(--color-primary), #1E40AF);
+    border-radius: var(--radius-xl);
+    color: white;
+}
+
+.ort-toc__cta-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    margin-bottom: var(--spacing-2);
+}
+
+.ort-toc__cta-text {
+    font-size: var(--font-size-xs);
+    opacity: 0.85;
+    line-height: 1.5;
+    margin-bottom: var(--spacing-4);
+}
+
+.ort-toc__cta .btn {
+    background: white;
+    color: var(--color-primary);
+    width: 100%;
+    justify-content: center;
+}
+
+.ort-toc__cta .btn:hover {
+    background: var(--color-gray-100);
+}
+
+/* ===== Main Content ===== */
+.ort-page__main {
+    min-width: 0;
+}
+
+.ort-section {
+    margin-bottom: var(--spacing-12);
+}
+
+.ort-section__title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-8);
+    letter-spacing: -0.02em;
+}
+
+.ort-section__title-bar {
+    width: 4px;
+    height: 28px;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+/* ===== Hero Card ===== */
+.ort-hero-card {
+    padding: var(--spacing-10) var(--spacing-8);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-2xl);
+}
+
+.ort-hero-card__badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--spacing-5);
+}
+
+.ort-hero-card__title {
+    font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-4xl));
+    font-weight: 800;
+    color: var(--color-gray-900);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: var(--spacing-4);
+    max-width: 500px;
+}
+
+.ort-hero-card__desc {
+    font-size: var(--font-size-base);
+    color: var(--color-gray-500);
+    line-height: 1.7;
+    max-width: 580px;
+    margin-bottom: var(--spacing-6);
+}
+
+.ort-hero-card__actions {
+    display: flex;
+    gap: var(--spacing-3);
+}
+
+/* ===== Exam Structure ===== */
+.ort-exam-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-6);
+}
+
+.ort-exam-card {
+    padding: var(--spacing-6);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-normal);
+}
+
+.ort-exam-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.ort-exam-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-4);
+}
+
+.ort-exam-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ort-exam-card__badge {
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.05em;
+}
+
+.ort-exam-card__badge--required {
+    color: #2563EB;
+    background: #DBEAFE;
+}
+
+.ort-exam-card__badge--elective {
+    color: #7C3AED;
+    background: #EDE9FE;
+}
+
+.ort-exam-card__name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.ort-exam-card__desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-5);
+}
+
+.ort-exam-card__stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--color-gray-100);
+}
+
+.ort-exam-card__stat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ort-exam-card__stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-400);
+}
+
+.ort-exam-card__stat-value {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-800);
+}
+
+/* ===== Subject Breakdown ===== */
+.ort-subjects-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.ort-subject-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-5);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.ort-subject-row:hover {
+    border-color: var(--color-gray-200);
+    box-shadow: var(--shadow-sm);
+}
+
+.ort-subject-row__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ort-subject-row__info {
+    flex: 1;
+}
+
+.ort-subject-row__name {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-gray-900);
+}
+
+.ort-subject-row__meta {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-400);
+    margin-top: 2px;
+}
+
+.ort-subject-row__arrow {
+    color: var(--color-gray-400);
+}
+
+/* ===== Timeline ===== */
+.ort-timeline {
+    position: relative;
+    padding: var(--spacing-4) 0;
+}
+
+.ort-timeline__line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-gray-200);
+    transform: translateX(-50%);
+}
+
+.ort-timeline__item {
+    position: relative;
+    display: flex;
+    margin-bottom: var(--spacing-10);
+}
+
+.ort-timeline__item--right {
+    justify-content: flex-end;
+    padding-left: 55%;
+}
+
+.ort-timeline__item--left {
+    justify-content: flex-start;
+    padding-right: 55%;
+}
+
+.ort-timeline__dot {
+    position: absolute;
+    left: 50%;
+    top: var(--spacing-4);
+    width: 12px;
+    height: 12px;
+    background: var(--color-white);
+    border: 2px solid var(--color-gray-300);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.ort-timeline__card {
+    padding: var(--spacing-5);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    max-width: 340px;
+    transition: all var(--transition-normal);
+}
+
+.ort-timeline__card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.ort-timeline__badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-3);
+}
+
+.ort-timeline__card-title {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.ort-timeline__card-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.6;
+}
+
+/* ===== Study Tips ===== */
+.ort-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-6);
+}
+
+.ort-tip-card {
+    padding: var(--spacing-6);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+.ort-tip-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.ort-tip-card__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    margin: 0 auto var(--spacing-4);
+}
+
+.ort-tip-card__title {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.ort-tip-card__desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.6;
+}
+
+/* ===== Resources ===== */
+.ort-resources {
+    padding: var(--spacing-8);
+    background: linear-gradient(135deg, #1E40AF, #2563EB);
+    border-radius: var(--radius-2xl);
+    color: white;
+}
+
+.ort-resources__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+}
+
+.ort-resources__title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-2);
+}
+
+.ort-resources__desc {
+    font-size: var(--font-size-sm);
+    opacity: 0.85;
+    max-width: 450px;
+    line-height: 1.6;
+}
+
+.ort-resources__header .btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    flex-shrink: 0;
+}
+
+.ort-resources__header .btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.ort-resources__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.ort-resource-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-5);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(4px);
+    transition: all var(--transition-fast);
+}
+
+.ort-resource-item:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.ort-resource-item__icon {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.ort-resource-item__type {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.05em;
+}
+
+.ort-resource-item__type--pdf {
+    background: #EF4444;
+    color: white;
+}
+
+.ort-resource-item__type--web {
+    background: #10B981;
+    color: white;
+}
+
+.ort-resource-item__type--quiz {
+    background: #F59E0B;
+    color: white;
+}
+
+.ort-resource-item__size {
+    font-size: 10px;
+    opacity: 0.65;
+}
+
+.ort-resource-item__info {
+    flex: 1;
+}
+
+.ort-resource-item__info h4 {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.ort-resource-item__dl {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color var(--transition-fast);
+    cursor: pointer;
+}
+
+.ort-resource-item__dl:hover {
+    color: white;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+    .ort-page__layout {
+        grid-template-columns: 1fr;
+    }
+
+    .ort-toc {
+        position: static;
+        display: flex;
+        gap: var(--spacing-4);
+        flex-wrap: wrap;
+        align-items: center;
+        padding-bottom: var(--spacing-6);
+        border-bottom: 1px solid var(--color-gray-100);
+        margin-bottom: var(--spacing-6);
+    }
+
+    .ort-toc__title {
+        display: none;
+    }
+
+    .ort-toc__nav {
+        flex-direction: row;
+        gap: var(--spacing-1);
+        margin-bottom: 0;
+        flex-wrap: wrap;
+    }
+
+    .ort-toc__link {
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+    }
+
+    .ort-toc__link--active {
+        border-bottom-color: var(--color-primary);
+        border-left-color: transparent;
+        background: transparent;
+    }
+
+    .ort-toc__cta {
+        display: none;
+    }
+
+    .ort-timeline__item--right,
+    .ort-timeline__item--left {
+        padding-left: var(--spacing-10);
+        padding-right: 0;
+        justify-content: flex-start;
+    }
+
+    .ort-timeline__line {
+        left: var(--spacing-4);
+    }
+
+    .ort-timeline__dot {
+        left: var(--spacing-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .ort-exam-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ort-tips-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ort-timeline__card {
+        max-width: 100%;
+    }
+
+    .ort-hero-card__actions {
+        flex-direction: column;
+    }
+
+    .ort-page__tabs-inner {
+        overflow-x: auto;
+    }
+
+    .ort-page__tabs-right {
+        display: none;
+    }
+
+    .ort-resources__header {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,36 @@
+.not-found {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.not-found__container {
+    text-align: center;
+}
+
+.not-found__code {
+    display: block;
+    font-size: clamp(5rem, 15vw, 10rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--color-primary), #60A5FA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.not-found__title {
+    margin-top: var(--spacing-4);
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-gray-900);
+}
+
+.not-found__description {
+    margin-top: var(--spacing-3);
+    font-size: var(--font-size-base);
+    color: var(--color-gray-500);
+    margin-bottom: var(--spacing-8);
+}
