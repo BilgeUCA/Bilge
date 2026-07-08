@@ -18,10 +18,10 @@ const stats = [
 ];
 
 const team = [
-    { name: 'Aisuluu Makeshova', roleKey: 'Founder & CEO', initials: 'AM' },
-    { name: 'Bekzat Asanbekov', roleKey: 'Head of Content', initials: 'BA' },
-    { name: 'Dinara Sultanova', roleKey: 'Lead Developer', initials: 'DS' },
-    { name: 'Ermek Toktosunov', roleKey: 'Partnership Manager', initials: 'ET' },
+    { name: 'Kairat Kubatov', roleKey: 'Founder & CEO', initials: 'KK' },
+    { name: 'Asylbek Zhunusov', roleKey: 'Backend Developer', initials: 'AZ' },
+    { name: 'Aizhigit Zhigitekov', roleKey: 'Backend Developer', initials: 'AZ' },
+    { name: 'Emir Sakiev', roleKey: 'Frontend Developer', initials: 'ES' },
 ];
 
 const AboutPage = () => {

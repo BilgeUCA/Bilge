@@ -3,15 +3,95 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+    position: relative;
+    overflow: hidden;
 }
 
-.not-found__container {
-    text-align: center;
+.not-found::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: -200px;
+    right: -100px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.not-found::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    bottom: -150px;
+    left: -100px;
+    animation: float 8s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(20px);
+    }
+}
+
+.not-found__wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    padding: var(--spacing-8);
+}
+
+.not-found__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-12);
+    align-items: center;
+}
+
+.not-found__text-section {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.not-found__image-section {
+    animation: slideInRight 0.8s ease-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .not-found__code {
     display: block;
-    font-size: clamp(5rem, 15vw, 10rem);
+    font-size: clamp(4rem, 12vw, 8rem);
     font-weight: 800;
     background: linear-gradient(135deg, var(--color-primary), #60A5FA);
     -webkit-background-clip: text;
@@ -19,18 +99,107 @@
     background-clip: text;
     line-height: 1;
     letter-spacing: -0.05em;
+    margin-bottom: var(--spacing-2);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .not-found__title {
     margin-top: var(--spacing-4);
-    font-size: var(--font-size-2xl);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
     font-weight: 700;
     color: var(--color-gray-900);
+    line-height: 1.2;
 }
 
 .not-found__description {
     margin-top: var(--spacing-3);
     font-size: var(--font-size-base);
-    color: var(--color-gray-500);
+    color: var(--color-gray-600);
     margin-bottom: var(--spacing-8);
+    line-height: 1.6;
+}
+
+.not-found__image-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.not-found__statue {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.1));
+    animation: bounce 3s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.not-found__glow {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: glow 3s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes glow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.4;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .not-found__content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-8);
+    }
+
+    .not-found__wrapper {
+        padding: var(--spacing-6);
+    }
+
+    .not-found__code {
+        font-size: clamp(3rem, 10vw, 5rem);
+    }
+
+    .not-found__title {
+        font-size: clamp(1.25rem, 3vw, 1.75rem);
+    }
+
+    .not-found__description {
+        font-size: var(--font-size-sm);
+    }
+
+    .not-found__image-container {
+        max-width: 300px;
+    }
 }
