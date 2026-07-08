@@ -12,9 +12,6 @@ const values = [
 
 const stats = [
     { value: '50+', labelKey: 'universities' },
-    { value: '10K+', labelKey: 'students' },
-    { value: '200+', labelKey: 'scholarships' },
-    { value: '15+', labelKey: 'partners' },
 ];
 
 const team = [
@@ -22,6 +19,7 @@ const team = [
     { name: 'Asylbek Zhunusov', roleKey: 'Backend Developer', initials: 'AZ' },
     { name: 'Aizhigit Zhigitekov', roleKey: 'Backend Developer', initials: 'AZ' },
     { name: 'Emir Sakiev', roleKey: 'Frontend Developer', initials: 'ES' },
+    { name: '', roleKey: 'Seeking Talented Contributors', initials: '?' },
 ];
 
 const AboutPage = () => {

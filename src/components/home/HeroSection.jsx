@@ -42,14 +42,6 @@ const HeroSection = () => {
                         >
                             {t('hero.exploreBtn')}
                         </Button>
-                        <Button
-                            to="/ort-prep"
-                            variant="secondary"
-                            size="lg"
-                            id="hero-ort-btn"
-                        >
-                            {t('hero.ortBtn')}
-                        </Button>
                     </div>
                 </SectionReveal>
             </div>

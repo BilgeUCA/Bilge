@@ -22,7 +22,7 @@ const allUniversities = [
     },
     {
         id: 'auca',
-        name: 'AUCA',
+        name: 'American University of Central Asia',
         location: 'Bishkek, Kyrgyzstan',
         tuition: '$6,000 / year',
         tuitionNum: 6000,
@@ -51,7 +51,7 @@ const allUniversities = [
     },
     {
         id: 'krsu',
-        name: 'KRSU',
+        name: 'Kyrgyz Russian Slavic University',
         location: 'Bishkek, Kyrgyzstan',
         tuition: '$1,200 / year',
         tuitionNum: 1200,
@@ -93,7 +93,7 @@ const allUniversities = [
     },
     {
         id: 'kimep',
-        name: 'KIMEP University',
+        name: 'KIMEP (Kazakhstan Institute of Management, Economics and Strategic Research) University',
         location: 'Almaty, Kazakhstan',
         tuition: '$9,000 / year',
         tuitionNum: 9000,
@@ -150,7 +150,7 @@ const allUniversities = [
     },
     {
         id: 'iitu',
-        name: 'Int. IT University',
+        name: 'International Information Technology University',
         location: 'Almaty, Kazakhstan',
         tuition: '$4,200 / year',
         tuitionNum: 4200,
@@ -215,7 +215,7 @@ const UniversitiesPage = () => {
     const [favorites, setFavorites] = useState([]);
 
     const filteredUniversities = useMemo(() => {
-        return allUniversities.filter((uni) => {
+        let filtered = allUniversities.filter((uni) => {
             const matchesSearch =
                 !searchQuery || uni.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 uni.majors.toLowerCase().includes(searchQuery.toLowerCase());
@@ -228,7 +228,27 @@ const UniversitiesPage = () => {
                 (!maxTuition || uni.tuitionNum <= parseInt(maxTuition));
             return matchesSearch && matchesCountry && matchesLanguage && matchesTuition;
         });
-    }, [searchQuery, selectedCountries, selectedLanguages, minTuition, maxTuition]);
+
+        // Apply sorting
+        const sorted = [...filtered];
+        switch (sortByKey) {
+            case 'lowestTuition':
+                sorted.sort((a, b) => a.tuitionNum - b.tuitionNum);
+                break;
+            case 'highestTuition':
+                sorted.sort((a, b) => b.tuitionNum - a.tuitionNum);
+                break;
+            case 'nameAZ':
+                sorted.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'topRanking':
+            default:
+                // Keep original order for top ranking
+                break;
+        }
+
+        return sorted;
+    }, [searchQuery, selectedCountries, selectedLanguages, minTuition, maxTuition, sortByKey]);
 
     const totalPages = Math.ceil(filteredUniversities.length / ITEMS_PER_PAGE);
     const paginatedUniversities = filteredUniversities.slice(
@@ -420,15 +440,24 @@ const UniversitiesPage = () => {
                                             <h3 className="uni-card__name">{uni.name}</h3>
                                             <div className="uni-card__detail">
                                                 <MapPin size={14} />
-                                                <span>{uni.location}</span>
+                                                <div className="uni-card__detail-content">
+                                                    <span className="uni-card__detail-label">{t('universitiesPage.cardLabels.location')}</span>
+                                                    <span className="uni-card__detail-value">{uni.location}</span>
+                                                </div>
                                             </div>
                                             <div className="uni-card__detail">
                                                 <DollarSign size={14} />
-                                                <span className={uni.tuitionNum === 0 ? 'uni-card__free' : ''}>{renderTuition(uni)}</span>
+                                                <div className="uni-card__detail-content">
+                                                    <span className="uni-card__detail-label">{t('universitiesPage.cardLabels.tuition')}</span>
+                                                    <span className={`uni-card__detail-value ${uni.tuitionNum === 0 ? 'uni-card__free' : ''}`}>{renderTuition(uni)}</span>
+                                                </div>
                                             </div>
                                             <div className="uni-card__detail">
                                                 <BookOpen size={14} />
-                                                <span>{uni.majors}</span>
+                                                <div className="uni-card__detail-content">
+                                                    <span className="uni-card__detail-label">{t('universitiesPage.cardLabels.majors')}</span>
+                                                    <span className="uni-card__detail-value">{uni.majors}</span>
+                                                </div>
                                             </div>
                                             <div className="uni-card__bottom">
                                                 <div className="uni-card__languages">

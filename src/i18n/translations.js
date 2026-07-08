@@ -9,17 +9,17 @@ const translations = {
             scholarships: 'Scholarships',
             about: 'About',
             login: 'Log in',
-            getStarted: 'Get Started',
+            languageNames: {
+                EN: 'EN',
+                RU: 'РУ',
+                KG: 'КГ',
+            },
         },
         footer: {
             description: 'Helping students in Kyrgyzstan navigate their academic future with confidence.',
             resourcesHeading: 'Resources',
             platformHeading: 'Platform',
-            newsletterHeading: 'Stay Updated',
-            newsletterText: 'Get the latest admissions and scholarship news.',
-            emailPlaceholder: 'Enter your email',
-            subscribe: 'Subscribe',
-            subscribed: 'Subscribed!',
+            legal: 'Legal',
             copyright: '© 2026 Bilge Education Platform. All rights reserved.',
             terms: 'Terms of Service',
             cookies: 'Cookie Policy',
@@ -132,6 +132,11 @@ const translations = {
             tuition: {
                 free: 'Free',
                 freeScholarship: 'Free (Scholarship based)',
+            },
+            cardLabels: {
+                location: 'Location',
+                tuition: 'Tuition',
+                majors: 'Majors',
             },
         },
         uniDetail: {
@@ -455,17 +460,17 @@ const translations = {
             scholarships: 'Стипендии',
             about: 'О нас',
             login: 'Войти',
-            getStarted: 'Начать',
+            languageNames: {
+                EN: 'EN',
+                RU: 'РУ',
+                KG: 'КГ',
+            },
         },
         footer: {
             description: 'Помогаем студентам Кыргызстана уверенно строить своё академическое будущее.',
             resourcesHeading: 'Ресурсы',
             platformHeading: 'Платформа',
-            newsletterHeading: 'Будьте в курсе',
-            newsletterText: 'Получайте последние новости о поступлении и стипендиях.',
-            emailPlaceholder: 'Введите ваш email',
-            subscribe: 'Подписаться',
-            subscribed: 'Подписка оформлена!',
+            legal: 'Юридическая информация',
             copyright: '© 2026 Образовательная платформа Bilge. Все права защищены.',
             terms: 'Условия использования',
             cookies: 'Политика cookies',
@@ -578,6 +583,11 @@ const translations = {
             tuition: {
                 free: 'Бесплатно',
                 freeScholarship: 'Бесплатно (по стипендии)',
+            },
+            cardLabels: {
+                location: 'Местоположение',
+                tuition: 'Стоимость',
+                majors: 'Специальности',
             },
         },
         uniDetail: {
@@ -901,17 +911,17 @@ const translations = {
             scholarships: 'Стипендиялар',
             about: 'Биз жөнүндө',
             login: 'Кирүү',
-            getStarted: 'Баштоо',
+            languageNames: {
+                EN: 'EN',
+                RU: 'РУ',
+                KG: 'КГ',
+            },
         },
         footer: {
             description: 'Кыргызстандын студенттерине академиялык келечегин ишенимдүү куруусуна жардам беребиз.',
             resourcesHeading: 'Ресурстар',
             platformHeading: 'Платформа',
-            newsletterHeading: 'Кабардар болуңуз',
-            newsletterText: 'Окууга кирүү жана стипендиялар боюнча акыркы жаңылыктар.',
-            emailPlaceholder: 'Email дарегиңизди жазыңыз',
-            subscribe: 'Жазылуу',
-            subscribed: 'Жазылдыңыз!',
+            legal: 'Юридикалык маалымат',
             copyright: '© 2026 Bilge Билим берүү платформасы. Бардык укуктар корголгон.',
             terms: 'Колдонуу шарттары',
             cookies: 'Cookie саясаты',
@@ -1024,6 +1034,11 @@ const translations = {
             tuition: {
                 free: 'Акысыз',
                 freeScholarship: 'Акысыз (стипендия менен)',
+            },
+            cardLabels: {
+                location: 'Жайгашкан жери',
+                tuition: 'Баасы',
+                majors: 'Адистиги',
             },
         },
         uniDetail: {
