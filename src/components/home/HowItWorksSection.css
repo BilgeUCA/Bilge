@@ -39,6 +39,11 @@
     gap: var(--spacing-3);
 }
 
+.how-it-works__guide-link:active {
+    opacity: 0.6;
+    transition: opacity var(--press-duration) var(--ease-spring);
+}
+
 .how-it-works__steps {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

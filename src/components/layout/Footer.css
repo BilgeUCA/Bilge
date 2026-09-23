@@ -82,6 +82,11 @@
     color: var(--color-primary);
 }
 
+.footer__link:active {
+    opacity: 0.6;
+    transition: opacity var(--press-duration) var(--ease-spring);
+}
+
 .footer__bottom {
     display: flex;
     align-items: center;

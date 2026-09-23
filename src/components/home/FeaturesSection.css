@@ -74,6 +74,11 @@
     gap: var(--spacing-2);
 }
 
+.features__card-link:active {
+    opacity: 0.6;
+    transition: opacity var(--press-duration) var(--ease-spring);
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .features__grid {

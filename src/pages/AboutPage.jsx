@@ -19,7 +19,6 @@ const team = [
     { name: 'Asylbek Zhunusov', roleKey: 'Backend Developer', initials: 'AZ' },
     { name: 'Aizhigit Zhigitekov', roleKey: 'Backend Developer', initials: 'AZ' },
     { name: 'Emir Sakiev', roleKey: 'Frontend Developer', initials: 'ES' },
-    { name: '', roleKey: 'Seeking Talented Contributors', initials: '?' },
 ];
 
 const AboutPage = () => {

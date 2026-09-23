@@ -69,9 +69,12 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
   /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow: 350ms ease;
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring-snappy: cubic-bezier(0.32, 0.72, 0, 1);
+  --transition-fast: 150ms var(--ease-spring);
+  --transition-normal: 250ms var(--ease-spring);
+  --transition-slow: 350ms var(--ease-spring);
+  --press-duration: 100ms;
 
   /* Container */
   --container-max: 1200px;
@@ -232,4 +235,30 @@ textarea {
 ::selection {
   background: var(--color-primary-light);
   color: var(--color-primary-700);
+}
+
+/* ===== Reduced motion / transparency / contrast ===== */
+/* A gentler equivalent, not a total absence of feedback: looping decorative
+   animations settle to their end state instead of cycling, and reveals/transitions
+   collapse to a near-instant cross-fade instead of a slide. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-gray-500: #4B5563;
+    --color-gray-400: #374151;
+  }
 }

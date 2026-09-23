@@ -27,6 +27,11 @@
     color: var(--color-primary);
 }
 
+.universities__view-all:active {
+    opacity: 0.6;
+    transition: opacity var(--press-duration) var(--ease-spring);
+}
+
 .universities__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -50,6 +55,11 @@
     border-color: var(--color-gray-200);
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
+}
+
+.university-card:active {
+    transform: translateY(-1px) scale(0.99);
+    transition-duration: var(--press-duration);
 }
 
 .university-card__score {

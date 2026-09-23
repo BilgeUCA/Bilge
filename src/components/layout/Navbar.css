@@ -15,6 +15,14 @@
     background: rgba(255, 255, 255, 0.98);
 }
 
+@media (prefers-reduced-transparency: reduce) {
+    .navbar {
+        background: var(--color-white);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
 .navbar__inner {
     display: flex;
     align-items: center;
@@ -66,6 +74,11 @@
 .navbar__link--active {
     color: var(--color-primary);
     background: var(--color-primary-50);
+}
+
+.navbar__link:active {
+    background: var(--color-gray-100);
+    transition-duration: var(--press-duration);
 }
 
 .navbar__actions {
@@ -122,6 +135,11 @@
 .t-tab:not([aria-selected="true"]):hover,
 .t-tab[aria-selected="true"] {
     color: var(--tabs-text-active);
+}
+
+.t-tab:active {
+    transform: scale(0.94);
+    transition: transform var(--press-duration) var(--ease-spring), color var(--tabs-dur) var(--tabs-ease);
 }
 
 .t-tabs-pill {
@@ -205,6 +223,11 @@
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
+.navbar__login-btn:active {
+    transform: scale(0.97);
+    transition-duration: var(--press-duration);
+}
+
 /* ===== Icon Swap Animation ===== */
 .t-icon-swap {
     position: relative;
@@ -251,6 +274,11 @@
 .navbar__mobile-toggle {
     display: none;
     color: var(--color-gray-700);
+    transition: transform var(--press-duration) var(--ease-spring);
+}
+
+.navbar__mobile-toggle:active {
+    transform: scale(0.88);
 }
 
 .navbar__overlay {

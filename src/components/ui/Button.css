@@ -86,3 +86,9 @@
     display: flex;
     align-items: center;
 }
+
+/* Press feedback: fires on pointer-down via :active, not on release */
+.btn:active {
+    transform: scale(0.97);
+    transition-duration: var(--press-duration);
+}

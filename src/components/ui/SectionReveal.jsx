@@ -3,12 +3,15 @@ import { useRef, useEffect, useState } from 'react';
 const SectionReveal = ({ children, className = '', delay = 0 }) => {
     const ref = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [prefersReducedMotion] = useState(
+        () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setTimeout(() => setIsVisible(true), delay);
+                    setTimeout(() => setIsVisible(true), prefersReducedMotion ? 0 : delay);
                     observer.unobserve(entry.target);
                 }
             },
@@ -20,7 +23,11 @@ const SectionReveal = ({ children, className = '', delay = 0 }) => {
         }
 
         return () => observer.disconnect();
-    }, [delay]);
+    }, [delay, prefersReducedMotion]);
+
+    // Reduced motion keeps the feedback (a fade) but drops the travel distance
+    const travel = prefersReducedMotion ? '0' : '30px';
+    const duration = prefersReducedMotion ? '0.2s' : '0.6s';
 
     return (
         <div
@@ -28,8 +35,8 @@ const SectionReveal = ({ children, className = '', delay = 0 }) => {
             className={className}
             style={{
                 opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-                transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
+                transform: isVisible ? 'translateY(0)' : `translateY(${travel})`,
+                transition: `opacity ${duration} var(--ease-spring) ${delay}ms, transform ${duration} var(--ease-spring) ${delay}ms`,
             }}
         >
             {children}
