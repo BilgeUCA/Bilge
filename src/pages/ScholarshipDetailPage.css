@@ -1,0 +1,87 @@
+/* ===== Scholarship detail (extends UniversityDetailPage.css) ===== */
+.schdet-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-4);
+}
+
+.schdet-box {
+    padding: var(--spacing-5);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+}
+
+.schdet-box__title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-4);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-gray-900);
+}
+
+.schdet-box__title svg {
+    color: var(--color-primary);
+}
+
+.schdet-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.schdet-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-700);
+    line-height: 1.5;
+}
+
+.schdet-list svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--color-success);
+}
+
+.schdet-list--neutral svg {
+    color: var(--color-primary);
+}
+
+.schdet-tips {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding-left: var(--spacing-4);
+    list-style: disc;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+    line-height: 1.6;
+}
+
+.schdet-window {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.schdet-bookmark--active {
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-100);
+}
+
+.schdet-note {
+    margin-top: var(--spacing-3);
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .schdet-columns {
+        grid-template-columns: 1fr;
+    }
+}

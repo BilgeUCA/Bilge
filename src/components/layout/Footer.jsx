@@ -9,12 +9,12 @@ const Footer = () => {
         resources: [
             { label: t('footer.links.universityDatabase'), path: '/universities' },
             { label: t('footer.links.scholarshipGuide'), path: '/scholarships' },
-            { label: t('footer.links.studentBlog'), path: '/blog' },
+            { label: t('footer.links.ortPracticeTests'), path: '/ort-prep?tab=practice' },
         ],
         platform: [
             { label: t('footer.links.aboutUs'), path: '/about' },
             { label: t('footer.links.contactSupport'), path: '/contact' },
-            { label: t('footer.links.forUniversities'), path: '/for-universities' },
+            { label: t('footer.links.forUniversities'), path: '/contact?topic=universities' },
         ],
         legal: [
             { label: t('footer.terms'), path: '/terms' },

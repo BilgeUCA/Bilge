@@ -39,7 +39,7 @@
 
 .about-page__stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-6);
 }
 
@@ -166,12 +166,6 @@
     font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--color-gray-900);
-}
-
-.about-team-card__role {
-    margin-top: var(--spacing-1);
-    font-size: var(--font-size-sm);
-    color: var(--color-gray-500);
 }
 
 /* CTA */

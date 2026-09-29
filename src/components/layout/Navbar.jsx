@@ -1,17 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useLanguage } from '../../i18n/useLanguage';
+import { useTranslation } from '../../i18n/useLanguage';
+import { useAuth } from '../../auth/authContext';
+import LanguageTabs from '../ui/LanguageTabs';
+import ThemeToggle from '../ui/ThemeToggle';
 import './Navbar.css';
+
+const initialsOf = (name = '') =>
+    name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0].toUpperCase())
+        .join('') || '?';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
-    const { language, setLanguage, availableLanguages, t } = useLanguage();
+    const { t } = useTranslation();
+    const { user } = useAuth();
     const location = useLocation();
-    const langTabsRef = useRef(null);
-    const langPillRef = useRef(null);
-    const mobileLangPillRef = useRef(null);
 
     const navLinks = [
         { path: '/universities', label: t('navbar.universities') },
@@ -20,164 +29,123 @@ const Navbar = () => {
         { path: '/about', label: t('navbar.about') },
     ];
 
-    // Update language button pill position.
-    // animate=false snaps instantly (initial mount / resize), animate=true
-    // lets the existing CSS transition tween between positions (language change).
-    const updatePillPosition = (tabsContainer, pillElement, animate = false) => {
-        if (!tabsContainer || !pillElement) return;
-
-        const activeTab = tabsContainer.querySelector('[aria-selected="true"]');
-        if (!activeTab) return;
-
-        const left = activeTab.offsetLeft;
-        const width = activeTab.offsetWidth;
-
-        if (!animate) {
-            // Disable transition for snap to position
-            pillElement.style.transition = 'none';
-            pillElement.style.transform = `translateX(${left}px)`;
-            pillElement.style.width = `${width}px`;
-
-            // Force reflow
-            void pillElement.offsetHeight;
-
-            // Re-enable transition
-            pillElement.style.transition =
-                'transform 250ms cubic-bezier(0.22, 1, 0.36, 1), width 250ms cubic-bezier(0.22, 1, 0.36, 1)';
-        } else {
-            pillElement.style.transform = `translateX(${left}px)`;
-            pillElement.style.width = `${width}px`;
-        }
-    };
-
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
-        };
-        window.addEventListener('scroll', handleScroll);
+        const handleScroll = () => setIsScrolled(window.scrollY > 10);
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    useEffect(() => {
+    // Close the drawer on navigation (state adjusted during render, not in an effect)
+    const [lastPath, setLastPath] = useState(location.pathname);
+    if (lastPath !== location.pathname) {
+        setLastPath(location.pathname);
         setIsMobileOpen(false);
-    }, [location]);
+    }
 
-    // Initialize and update pill position for desktop.
-    // The first run (mount) snaps into place; later runs (language change) animate.
-    const hasMountedDesktopPill = useRef(false);
+    // While the drawer is open: lock page scroll, close on Escape,
+    // and close automatically if the viewport grows past the mobile breakpoint
     useEffect(() => {
-        updatePillPosition(langTabsRef.current, langPillRef.current, hasMountedDesktopPill.current);
-        hasMountedDesktopPill.current = true;
-    }, [language]);
-
-    // Initialize and update pill position for mobile
-    const hasMountedMobilePill = useRef(false);
-    useEffect(() => {
-        const mobileLangTabs = document.querySelector('.navbar__lang-mobile');
-        updatePillPosition(mobileLangTabs, mobileLangPillRef.current, hasMountedMobilePill.current);
-        hasMountedMobilePill.current = true;
-    }, [language, isMobileOpen]);
-
-    // Handle window resize
-    useEffect(() => {
-        const handleResize = () => {
-            updatePillPosition(langTabsRef.current, langPillRef.current);
-            const mobileLangTabs = document.querySelector('.navbar__lang-mobile');
-            updatePillPosition(mobileLangTabs, mobileLangPillRef.current);
+        if (!isMobileOpen) return undefined;
+        const onKey = (e) => e.key === 'Escape' && setIsMobileOpen(false);
+        const mq = window.matchMedia('(min-width: 869px)');
+        const onResize = (e) => e.matches && setIsMobileOpen(false);
+        document.body.style.overflow = 'hidden';
+        window.addEventListener('keydown', onKey);
+        mq.addEventListener('change', onResize);
+        return () => {
+            document.body.style.overflow = '';
+            window.removeEventListener('keydown', onKey);
+            mq.removeEventListener('change', onResize);
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [isMobileOpen]);
+
+    const accountLink = (extraClass = '') =>
+        user ? (
+            <Link to="/account" className={`navbar__user ${extraClass}`} title={user.email}>
+                <span className="navbar__user-avatar" aria-hidden="true">{initialsOf(user.name)}</span>
+                <span className="navbar__user-name">{user.name.split(' ')[0]}</span>
+            </Link>
+        ) : (
+            <Link to="/login" className={`navbar__login-btn navbar__login-btn--colored ${extraClass}`}>
+                {t('navbar.login')}
+            </Link>
+        );
+
+    const renderLinks = (className) => (
+        <ul className={className}>
+            {navLinks.map((link) => (
+                <li key={link.path}>
+                    <NavLink
+                        to={link.path}
+                        className={({ isActive }) => `navbar__link ${isActive ? 'navbar__link--active' : ''}`}
+                    >
+                        {link.label}
+                    </NavLink>
+                </li>
+            ))}
+        </ul>
+    );
 
     return (
-        <header className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`} id="navbar">
-            <div className="container navbar__inner">
-                <Link to="/" className="navbar__logo" id="logo">
-                    <span className="navbar__logo-text">BILGE</span>
-                </Link>
-
-                <nav className={`navbar__nav ${isMobileOpen ? 'navbar__nav--open' : ''}`} id="main-nav">
-                    <ul className="navbar__links">
-                        {navLinks.map((link) => (
-                            <li key={link.path}>
-                                <NavLink
-                                    to={link.path}
-                                    className={({ isActive }) =>
-                                        `navbar__link ${isActive ? 'navbar__link--active' : ''}`
-                                    }
-                                    id={`nav-${link.path.slice(1)}`}
-                                >
-                                    {link.label}
-                                </NavLink>
-                            </li>
-                        ))}
-                    </ul>
-
-                    <div className="navbar__actions-mobile">
-                        <div className="navbar__lang navbar__lang-mobile t-tabs" role="tablist">
-                            <span className="t-tabs-pill" ref={mobileLangPillRef}></span>
-                            {availableLanguages.map((lang) => (
-                                <button
-                                    key={lang}
-                                    type="button"
-                                    className="t-tab navbar__lang-btn"
-                                    onClick={() => setLanguage(lang)}
-                                    aria-pressed={language === lang}
-                                    aria-selected={language === lang}
-                                    role="tab"
-                                >
-                                    {t('navbar.languageNames')[lang]}
-                                </button>
-                            ))}
-                        </div>
-                        <Link to="/login" className="navbar__login-btn navbar__login-btn--colored" id="login-btn-mobile">
-                            {t('navbar.login')}
-                        </Link>
-                    </div>
-                </nav>
-
-                <div className="navbar__actions">
-                    <div className="navbar__lang t-tabs" ref={langTabsRef} role="tablist">
-                        <span className="t-tabs-pill" ref={langPillRef}></span>
-                        {availableLanguages.map((lang) => (
-                            <button
-                                key={lang}
-                                type="button"
-                                className="t-tab navbar__lang-btn"
-                                onClick={() => setLanguage(lang)}
-                                aria-pressed={language === lang}
-                                aria-selected={language === lang}
-                                role="tab"
-                            >
-                                {t('navbar.languageNames')[lang]}
-                            </button>
-                        ))}
-                    </div>
-                    <Link to="/login" className="navbar__login-btn navbar__login-btn--colored" id="login-btn">
-                        {t('navbar.login')}
+        <>
+            <header className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`} id="navbar">
+                <div className="container navbar__inner">
+                    <Link to="/" className="navbar__logo" id="logo">
+                        <span className="navbar__logo-text">BILGE</span>
                     </Link>
+
+                    <nav className="navbar__nav" aria-label={t('navbar.mainNav')}>
+                        {renderLinks('navbar__links')}
+                    </nav>
+
+                    <div className="navbar__actions">
+                        <LanguageTabs />
+                        <ThemeToggle />
+                        {accountLink()}
+                    </div>
+
+                    <button
+                        type="button"
+                        className="navbar__mobile-toggle t-icon-swap"
+                        onClick={() => setIsMobileOpen((open) => !open)}
+                        aria-label={isMobileOpen ? t('navbar.closeMenu') : t('navbar.openMenu')}
+                        aria-expanded={isMobileOpen}
+                        aria-controls="mobile-menu"
+                        id="mobile-toggle"
+                        data-state={isMobileOpen ? 'b' : 'a'}
+                    >
+                        <span className="t-icon" data-icon="a" aria-hidden="true">
+                            <Menu size={24} />
+                        </span>
+                        <span className="t-icon" data-icon="b" aria-hidden="true">
+                            <X size={24} />
+                        </span>
+                    </button>
                 </div>
+            </header>
 
-                <button
-                    className="navbar__mobile-toggle t-icon-swap"
-                    onClick={() => setIsMobileOpen(!isMobileOpen)}
-                    aria-label="Toggle navigation menu"
-                    id="mobile-toggle"
-                    data-state={isMobileOpen ? 'b' : 'a'}
-                >
-                    <span className="t-icon" data-icon="a">
-                        <Menu size={24} />
-                    </span>
-                    <span className="t-icon" data-icon="b">
-                        <X size={24} />
-                    </span>
-                </button>
-            </div>
-
-            {isMobileOpen && (
-                <div className="navbar__overlay" onClick={() => setIsMobileOpen(false)} />
-            )}
-        </header>
+            {/* The drawer lives outside <header>: the header's backdrop-filter would
+                otherwise become the containing block for these fixed elements */}
+            <div
+                className={`navbar__overlay ${isMobileOpen ? 'navbar__overlay--visible' : ''}`}
+                onClick={() => setIsMobileOpen(false)}
+                aria-hidden="true"
+            />
+            <nav
+                id="mobile-menu"
+                className={`navbar__drawer ${isMobileOpen ? 'navbar__drawer--open' : ''}`}
+                aria-label={t('navbar.mainNav')}
+                inert={!isMobileOpen}
+            >
+                {renderLinks('navbar__drawer-links')}
+                <div className="navbar__drawer-footer">
+                    <LanguageTabs className="navbar__lang--full" />
+                    <ThemeToggle showLabel />
+                    {accountLink('navbar__drawer-cta')}
+                </div>
+            </nav>
+        </>
     );
 };
 

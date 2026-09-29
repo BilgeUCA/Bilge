@@ -1,9 +1,20 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, Download, ChevronRight, FileText, BarChart3, PlayCircle, Library, ArrowRight } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { BookOpen, Download, ChevronRight, FileText, BarChart3, PlayCircle, Library, ArrowRight, ExternalLink } from 'lucide-react';
 import Button from '../components/ui/Button';
 import SectionReveal from '../components/ui/SectionReveal';
+import OrtPractice from '../components/ort/OrtPractice';
 import { useTranslation } from '../i18n/useLanguage';
+import { useAuth } from '../auth/authContext';
+import { useStoredState } from '../hooks/useStoredState';
+import { ORT_RESULTS_KEY } from '../data/ortPractice';
+import { fmt } from '../utils/format';
 import './ORTPrepPage.css';
+
+// Official ORT organiser: Center for Educational Assessment and Teaching Methods
+const TESTING_KG = 'https://testing.kg';
+const MINISTRY = 'https://edu.gov.kg';
+const TABS = ['guide', 'practice', 'progress'];
 
 const tocItems = [
     { id: 'overview', labelKey: 'overview' },
@@ -15,20 +26,31 @@ const tocItems = [
 ];
 
 const studyTips = [
-    { icon: '⏱️', titleKey: 'tipTimeTitle', descKey: 'tipTimeDesc', color: '#EF4444', bg: '#FEF2F2' },
-    { icon: '🧠', titleKey: 'tipLogicTitle', descKey: 'tipLogicDesc', color: '#3B82F6', bg: '#EFF6FF' },
-    { icon: '✂️', titleKey: 'tipElimTitle', descKey: 'tipElimDesc', color: '#8B5CF6', bg: '#F5F3FF' },
+    { icon: '⏱️', titleKey: 'tipTimeTitle', descKey: 'tipTimeDesc', color: '#EF4444', bg: 'rgba(239, 68, 68, 0.14)' },
+    { icon: '🧠', titleKey: 'tipLogicTitle', descKey: 'tipLogicDesc', color: '#3B82F6', bg: 'rgba(37, 99, 235, 0.1)' },
+    { icon: '✂️', titleKey: 'tipElimTitle', descKey: 'tipElimDesc', color: '#8B5CF6', bg: 'rgba(124, 58, 237, 0.1)' },
 ];
 
 const resources = [
-    { titleKey: 'officialExam', type: 'PDF', size: '2 MB', sizeKey: null },
-    { titleKey: 'guidelines', type: 'WEB', size: null, sizeKey: 'externalLink' },
-    { titleKey: 'diagnostic', type: 'QUIZ', size: null, sizeKey: 'interactive' },
+    { titleKey: 'officialExam', type: 'WEB', sizeKey: 'externalLink', href: TESTING_KG },
+    { titleKey: 'guidelines', type: 'WEB', sizeKey: 'externalLink', href: MINISTRY },
+    { titleKey: 'diagnostic', type: 'QUIZ', sizeKey: 'interactive', tab: 'practice' },
 ];
 
 const ORTPrepPage = () => {
     const { t } = useTranslation();
+    const { user } = useAuth();
+    const [params, setParams] = useSearchParams();
+    const tab = TABS.includes(params.get('tab')) ? params.get('tab') : 'guide';
+    const [practiceSubject, setPracticeSubject] = useState(params.get('subject') || 'all');
+    const [results] = useStoredState(ORT_RESULTS_KEY, []);
     const [activeSection, setActiveSection] = useState('overview');
+
+    const openTab = (next, subject) => {
+        if (subject) setPracticeSubject(subject);
+        setParams(next === 'guide' ? {} : { tab: next }, { replace: false });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -44,7 +66,7 @@ const ORTPrepPage = () => {
             }
         };
 
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -59,17 +81,78 @@ const ORTPrepPage = () => {
         <div className="ort-page">
             {/* Top nav tabs */}
             <div className="ort-page__tabs">
-                <div className="container ort-page__tabs-inner">
-                    <button className="ort-page__tab">{t('ort.tabs.dashboard')}</button>
-                    <button className="ort-page__tab ort-page__tab--active">{t('ort.tabs.guide')}</button>
-                    <button className="ort-page__tab">{t('ort.tabs.practiceTests')}</button>
-                    <button className="ort-page__tab">{t('ort.tabs.community')}</button>
+                <div className="container ort-page__tabs-inner" role="tablist" aria-label={t('navbar.ortPrep')}>
+                    {TABS.map((key) => (
+                        <button
+                            type="button"
+                            role="tab"
+                            key={key}
+                            aria-selected={tab === key}
+                            className={`ort-page__tab ${tab === key ? 'ort-page__tab--active' : ''}`}
+                            onClick={() => openTab(key)}
+                        >
+                            {t(`ort.tabs.${key}`)}
+                        </button>
+                    ))}
                     <div className="ort-page__tabs-right">
-                        <Button variant="primary" size="sm" id="sign-in-btn">{t('ort.signIn')}</Button>
+                        {user ? (
+                            <Button variant="secondary" size="sm" to="/account">{t('ort.myAccount')}</Button>
+                        ) : (
+                            <Button variant="primary" size="sm" to="/login" state={{ from: '/ort-prep?tab=progress' }} id="sign-in-btn">
+                                {t('ort.signIn')}
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
 
+            {tab === 'practice' && (
+                <div className="container ort-page__single">
+                    <OrtPractice initialSubject={practiceSubject} />
+                </div>
+            )}
+
+            {tab === 'progress' && (
+                <div className="container ort-page__single">
+                    <div className="ort-progress">
+                        <h2 className="ort-progress__title">{t('ort.progressTitle')}</h2>
+                        {results.length === 0 ? (
+                            <>
+                                <p className="ort-progress__empty">{t('ort.progressEmpty')}</p>
+                                <Button variant="primary" size="md" onClick={() => openTab('practice')}>{t('ort.startDiagnostic')}</Button>
+                            </>
+                        ) : (
+                            <>
+                                <p className="ort-progress__best">
+                                    {fmt(t('ort.progressBest'), {
+                                        pct: Math.max(...results.map((r) => Math.round((r.correct / r.total) * 100))),
+                                        n: results.length,
+                                    })}
+                                </p>
+                                <ul className="ort-progress__list">
+                                    {[...results].reverse().map((r) => {
+                                        const pct = Math.round((r.correct / r.total) * 100);
+                                        return (
+                                            <li key={r.date} className="ort-progress__row">
+                                                <span className="ort-progress__date">
+                                                    {new Date(r.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                                <span className="ort-progress__subject">{t(`ortPractice.subjects.${r.subject}`)}</span>
+                                                <span className="ort-progress__bar" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>
+                                                <strong className="ort-progress__pct">{pct}%</strong>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                                <Button variant="primary" size="md" onClick={() => openTab('practice')}>{t('ortPractice.again')}</Button>
+                            </>
+                        )}
+                        {!user && <p className="ort-progress__note">{t('ort.progressNote')} <Link to="/login">{t('ort.signIn')}</Link></p>}
+                    </div>
+                </div>
+            )}
+
+            {tab === 'guide' && (
             <div className="container ort-page__layout">
                 {/* Sidebar TOC */}
                 <aside className="ort-toc" id="ort-toc">
@@ -88,14 +171,14 @@ const ORTPrepPage = () => {
                     <div className="ort-toc__cta">
                         <p className="ort-toc__cta-title">{t('ort.ctaTitle')}</p>
                         <p className="ort-toc__cta-text">{t('ort.ctaText')}</p>
-                        <Button variant="primary" size="sm" id="start-diagnostic-btn">
+                        <Button variant="primary" size="sm" id="start-diagnostic-btn" onClick={() => openTab('practice')}>
                             {t('ort.startDiagnostic')}
                         </Button>
                     </div>
                 </aside>
 
                 {/* Main Content */}
-                <main className="ort-page__main">
+                <div className="ort-page__main">
                     {/* Overview Section */}
                     <section id="overview" className="ort-section">
                         <SectionReveal>
@@ -108,10 +191,10 @@ const ORTPrepPage = () => {
                                     {t('ort.heroDesc')}
                                 </p>
                                 <div className="ort-hero-card__actions">
-                                    <Button variant="primary" size="md" icon={<ArrowRight size={16} />} id="start-studying-btn">
+                                    <Button variant="primary" size="md" icon={<ArrowRight size={16} />} id="start-studying-btn" onClick={() => scrollToSection('exam-structure')}>
                                         {t('ort.startStudying')}
                                     </Button>
-                                    <Button variant="secondary" size="md" icon={<Download size={16} />} id="download-syllabus-btn">
+                                    <Button variant="secondary" size="md" icon={<Download size={16} />} id="download-syllabus-btn" href={TESTING_KG}>
                                         {t('ort.downloadSyllabus')}
                                     </Button>
                                 </div>
@@ -131,7 +214,7 @@ const ORTPrepPage = () => {
                             <SectionReveal delay={80}>
                                 <div className="ort-exam-card">
                                     <div className="ort-exam-card__header">
-                                        <div className="ort-exam-card__icon" style={{ background: '#EFF6FF' }}>
+                                        <div className="ort-exam-card__icon" style={{ background: 'rgba(37, 99, 235, 0.1)' }}>
                                             <FileText size={20} color="#2563EB" />
                                         </div>
                                         <span className="ort-exam-card__badge ort-exam-card__badge--required">{t('ort.compulsory')}</span>
@@ -157,7 +240,7 @@ const ORTPrepPage = () => {
                             <SectionReveal delay={160}>
                                 <div className="ort-exam-card">
                                     <div className="ort-exam-card__header">
-                                        <div className="ort-exam-card__icon" style={{ background: '#F5F3FF' }}>
+                                        <div className="ort-exam-card__icon" style={{ background: 'rgba(124, 58, 237, 0.1)' }}>
                                             <BookOpen size={20} color="#7C3AED" />
                                         </div>
                                         <span className="ort-exam-card__badge ort-exam-card__badge--elective">{t('ort.elective')}</span>
@@ -193,28 +276,28 @@ const ORTPrepPage = () => {
                         </SectionReveal>
                         <div className="ort-subjects-list">
                             <SectionReveal delay={80}>
-                                <div className="ort-subject-row">
-                                    <div className="ort-subject-row__icon" style={{ background: '#EFF6FF' }}>
-                                        <BarChart3 size={20} color="#2563EB" />
+                                <button type="button" className="ort-subject-row" onClick={() => openTab('practice', 'math')}>
+                                    <div className="ort-subject-row__icon ort-icon--blue">
+                                        <BarChart3 size={20} />
                                     </div>
                                     <div className="ort-subject-row__info">
                                         <h4 className="ort-subject-row__name">{t('ort.mathematics')}</h4>
-                                        <p className="ort-subject-row__meta">{t('ort.questionsMeta')}</p>
+                                        <p className="ort-subject-row__meta">{t('ort.questionsMeta')} · {t('ort.practiceNow')}</p>
                                     </div>
                                     <ChevronRight size={20} className="ort-subject-row__arrow" />
-                                </div>
+                                </button>
                             </SectionReveal>
                             <SectionReveal delay={160}>
-                                <div className="ort-subject-row">
-                                    <div className="ort-subject-row__icon" style={{ background: '#F5F3FF' }}>
-                                        <BookOpen size={20} color="#7C3AED" />
+                                <button type="button" className="ort-subject-row" onClick={() => openTab('practice', 'verbal')}>
+                                    <div className="ort-subject-row__icon ort-icon--violet">
+                                        <BookOpen size={20} />
                                     </div>
                                     <div className="ort-subject-row__info">
                                         <h4 className="ort-subject-row__name">{t('ort.verbalReasoning')}</h4>
-                                        <p className="ort-subject-row__meta">{t('ort.questionsMeta')}</p>
+                                        <p className="ort-subject-row__meta">{t('ort.questionsMeta')} · {t('ort.practiceNow')}</p>
                                     </div>
                                     <ChevronRight size={20} className="ort-subject-row__arrow" />
-                                </div>
+                                </button>
                             </SectionReveal>
                         </div>
                     </section>
@@ -234,7 +317,7 @@ const ORTPrepPage = () => {
                                 <div className="ort-timeline__item ort-timeline__item--right">
                                     <div className="ort-timeline__dot" />
                                     <div className="ort-timeline__card">
-                                        <span className="ort-timeline__badge" style={{ background: '#DBEAFE', color: '#2563EB' }}>{t('ort.foundationBadge')}</span>
+                                        <span className="ort-timeline__badge" style={{ background: 'rgba(37, 99, 235, 0.12)', color: '#2563EB' }}>{t('ort.foundationBadge')}</span>
                                         <h4 className="ort-timeline__card-title">{t('ort.foundationTitle')}</h4>
                                         <p className="ort-timeline__card-desc">{t('ort.foundationDesc')}</p>
                                     </div>
@@ -245,7 +328,7 @@ const ORTPrepPage = () => {
                                 <div className="ort-timeline__item ort-timeline__item--left">
                                     <div className="ort-timeline__dot" />
                                     <div className="ort-timeline__card">
-                                        <span className="ort-timeline__badge" style={{ background: '#ECFDF5', color: '#059669' }}>{t('ort.practiceBadge')}</span>
+                                        <span className="ort-timeline__badge" style={{ background: 'rgba(16, 185, 129, 0.14)', color: '#059669' }}>{t('ort.practiceBadge')}</span>
                                         <h4 className="ort-timeline__card-title">{t('ort.practiceTitle')}</h4>
                                         <p className="ort-timeline__card-desc">{t('ort.practiceDesc')}</p>
                                     </div>
@@ -256,7 +339,7 @@ const ORTPrepPage = () => {
                                 <div className="ort-timeline__item ort-timeline__item--right">
                                     <div className="ort-timeline__dot" />
                                     <div className="ort-timeline__card">
-                                        <span className="ort-timeline__badge" style={{ background: '#FEF2F2', color: '#DC2626' }}>{t('ort.reviewBadge')}</span>
+                                        <span className="ort-timeline__badge" style={{ background: 'rgba(239, 68, 68, 0.14)', color: '#DC2626' }}>{t('ort.reviewBadge')}</span>
                                         <h4 className="ort-timeline__card-title">{t('ort.reviewTitle')}</h4>
                                         <p className="ort-timeline__card-desc">{t('ort.reviewDesc')}</p>
                                     </div>
@@ -299,7 +382,7 @@ const ORTPrepPage = () => {
                                             {t('ort.resourcesDesc')}
                                         </p>
                                     </div>
-                                    <Button variant="primary" size="sm" icon={<Library size={16} />} id="browse-library-btn">
+                                    <Button variant="primary" size="sm" icon={<Library size={16} />} id="browse-library-btn" href={TESTING_KG}>
                                         {t('ort.browseLibrary')}
                                     </Button>
                                 </div>
@@ -311,23 +394,34 @@ const ORTPrepPage = () => {
                                                     {res.type}
                                                 </span>
                                                 <span className="ort-resource-item__size">
-                                                    {res.sizeKey ? t(`ort.resourceItems.${res.sizeKey}`) : res.size}
+                                                    {t(`ort.resourceItems.${res.sizeKey}`)}
                                                 </span>
                                             </div>
                                             <div className="ort-resource-item__info">
-                                                <h4>{t(`ort.resourceItems.${res.titleKey}`)}</h4>
+                                                <h4>
+                                                    {res.href ? (
+                                                        <a href={res.href} target="_blank" rel="noopener noreferrer" className="ort-resource-item__link">
+                                                            {t(`ort.resourceItems.${res.titleKey}`)}
+                                                        </a>
+                                                    ) : (
+                                                        <button type="button" className="ort-resource-item__link" onClick={() => openTab(res.tab)}>
+                                                            {t(`ort.resourceItems.${res.titleKey}`)}
+                                                        </button>
+                                                    )}
+                                                </h4>
                                             </div>
-                                            <button className="ort-resource-item__dl">
-                                                <PlayCircle size={20} />
-                                            </button>
+                                            <span className="ort-resource-item__dl" aria-hidden="true">
+                                                {res.href ? <ExternalLink size={20} /> : <PlayCircle size={20} />}
+                                            </span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </SectionReveal>
                     </section>
-                </main>
+                </div>
             </div>
+            )}
         </div>
     );
 };

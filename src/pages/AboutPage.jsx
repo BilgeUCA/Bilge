@@ -2,6 +2,9 @@ import { Users, Target, Heart, Mail } from 'lucide-react';
 import Button from '../components/ui/Button';
 import SectionReveal from '../components/ui/SectionReveal';
 import { useTranslation } from '../i18n/useLanguage';
+import { universities } from '../data/universities';
+import { scholarships } from '../data/scholarships';
+import { SUPPORTED_LANGUAGES } from '../i18n/translations';
 import './AboutPage.css';
 
 const values = [
@@ -10,15 +13,18 @@ const values = [
     { icon: Heart, titleKey: 'empowermentTitle', descKey: 'empowermentDesc' },
 ];
 
+// Real counts from the site's own data
 const stats = [
-    { value: '50+', labelKey: 'universities' },
+    { value: universities.length, labelKey: 'universities' },
+    { value: scholarships.length, labelKey: 'scholarships' },
+    { value: SUPPORTED_LANGUAGES.length, labelKey: 'languages' },
 ];
 
 const team = [
-    { name: 'Kairat Kubatov', roleKey: 'Founder & CEO', initials: 'KK' },
-    { name: 'Asylbek Zhunusov', roleKey: 'Backend Developer', initials: 'AZ' },
-    { name: 'Aizhigit Zhigitekov', roleKey: 'Backend Developer', initials: 'AZ' },
-    { name: 'Emir Sakiev', roleKey: 'Frontend Developer', initials: 'ES' },
+    { name: 'Kairat Kubatov', initials: 'KK' },
+    { name: 'Asylbek Zhunusov', initials: 'AZ' },
+    { name: 'Aizhigit Zhigitekov', initials: 'AZ' },
+    { name: 'Emir Sakiev', initials: 'ES' },
 ];
 
 const AboutPage = () => {
@@ -94,13 +100,10 @@ const AboutPage = () => {
                         {team.map((member, index) => (
                             <SectionReveal key={member.name} delay={index * 100}>
                                 <div className="about-team-card">
-                                    <div className="about-team-card__avatar">
+                                    <div className="about-team-card__avatar" aria-hidden="true">
                                         {member.initials}
                                     </div>
                                     <h3 className="about-team-card__name">{member.name}</h3>
-                                    <p className="about-team-card__role">
-                                        {t(`about.roles.${member.roleKey}`)}
-                                    </p>
                                 </div>
                             </SectionReveal>
                         ))}

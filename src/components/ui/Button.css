@@ -32,7 +32,7 @@
 
 /* Variants */
 .btn--primary {
-    color: var(--color-white);
+    color: var(--color-on-primary);
     background: var(--color-primary);
 }
 
@@ -72,7 +72,7 @@
 
 .btn--outline-primary:hover {
     background: var(--color-primary);
-    color: var(--color-white);
+    color: var(--color-on-primary);
     transform: translateY(-1px);
 }
 

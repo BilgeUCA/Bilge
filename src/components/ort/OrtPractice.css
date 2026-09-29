@@ -1,0 +1,248 @@
+.ort-practice {
+    padding: var(--spacing-8);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-2xl);
+}
+
+.ort-practice__title {
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    color: var(--color-gray-900);
+    letter-spacing: -0.02em;
+}
+
+.ort-practice__text {
+    margin: var(--spacing-2) 0 var(--spacing-6);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.7;
+    max-width: 560px;
+}
+
+.ort-practice__subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-6);
+    border: none;
+}
+
+.ort-practice__subject {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-800);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.ort-practice__subject input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ort-practice__subject:has(input:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.ort-practice__subject small {
+    font-size: var(--font-size-xs);
+    font-weight: 400;
+    color: var(--color-gray-500);
+}
+
+.ort-practice__subject--active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+}
+
+.ort-practice__progress {
+    height: 6px;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.ort-practice__progress span {
+    display: block;
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: inherit;
+    transition: width var(--transition-normal);
+}
+
+.ort-practice__counter {
+    margin: var(--spacing-4) 0 var(--spacing-2);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ort-practice__question {
+    border: none;
+}
+
+.ort-practice__prompt {
+    padding: 0;
+    margin-bottom: var(--spacing-5);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--color-gray-900);
+}
+
+.ort-practice__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.ort-practice__option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-800);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.ort-practice__option:hover {
+    border-color: var(--color-gray-300);
+    background: var(--color-gray-50);
+}
+
+.ort-practice__option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ort-practice__option:has(input:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.ort-practice__option--chosen {
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.ort-practice__letter {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-gray-500);
+    background: var(--color-gray-100);
+    border-radius: 50%;
+}
+
+.ort-practice__option--chosen .ort-practice__letter {
+    color: var(--color-on-primary);
+    background: var(--color-primary);
+}
+
+.ort-practice__nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-6);
+}
+
+.ort-practice .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.ort-practice__score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-6);
+    border-bottom: 1px solid var(--color-gray-100);
+    text-align: center;
+    color: var(--color-gray-600);
+}
+
+.ort-practice__score-value {
+    font-size: var(--font-size-5xl);
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1;
+}
+
+.ort-practice__score p {
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.ort-practice__review {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+    list-style: none;
+}
+
+.ort-practice__review-item {
+    display: flex;
+    gap: var(--spacing-3);
+}
+
+.ort-practice__review-item > svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.ort-practice__review-item.is-correct > svg {
+    color: var(--color-success);
+}
+
+.ort-practice__review-item.is-wrong > svg {
+    color: var(--color-error);
+}
+
+.ort-practice__review-q {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-900);
+}
+
+.ort-practice__review-a {
+    margin-top: 2px;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+}
+
+.ort-practice__review-exp {
+    margin-top: 2px;
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-500);
+}
+
+@media (max-width: 480px) {
+    .ort-practice {
+        padding: var(--spacing-5);
+    }
+}

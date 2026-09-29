@@ -70,7 +70,7 @@
     font-size: var(--font-size-xs);
     font-weight: 600;
     color: var(--color-primary);
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--color-surface-glass);
     backdrop-filter: blur(8px);
     border-radius: var(--radius-full);
     z-index: 2;
@@ -86,10 +86,32 @@
     position: relative;
 }
 
+.university-card__logo-area {
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--color-primary-50);
+}
+
+.university-card__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    transition: transform var(--transition-slow);
+}
+
+.university-card:hover .university-card__photo {
+    transform: scale(1.04);
+}
+
 .university-card__logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 88px;
+    height: 88px;
+    padding: 8px;
+    border-radius: var(--radius-xl);
+    font-size: var(--font-size-lg);
 }
 
 .university-card__content {

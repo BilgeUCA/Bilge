@@ -1,3 +1,5 @@
+import extra from './translations.extra';
+
 export const SUPPORTED_LANGUAGES = ['EN', 'RU', 'KG'];
 export const DEFAULT_LANGUAGE = 'EN';
 
@@ -438,12 +440,6 @@ const translations = {
                 empowermentTitle: 'Empowerment',
                 empowermentDesc:
                     'Giving students the tools and information they need to make informed decisions about their future.',
-            },
-            roles: {
-                'Founder & CEO': 'Founder & CEO',
-                'Head of Content': 'Head of Content',
-                'Lead Developer': 'Lead Developer',
-                'Partnership Manager': 'Partnership Manager',
             },
         },
         notFound: {
@@ -890,12 +886,6 @@ const translations = {
                 empowermentDesc:
                     'Даём студентам инструменты и информацию для осознанных решений о своём будущем.',
             },
-            roles: {
-                'Founder & CEO': 'Основатель и CEO',
-                'Head of Content': 'Руководитель контента',
-                'Lead Developer': 'Ведущий разработчик',
-                'Partnership Manager': 'Менеджер по партнёрствам',
-            },
         },
         notFound: {
             title: 'Страница не найдена',
@@ -1341,12 +1331,6 @@ const translations = {
                 empowermentDesc:
                     'Студенттерге келечеги боюнча акылдуу чечим чыгаруу үчүн куралдарды жана маалыматты беребиз.',
             },
-            roles: {
-                'Founder & CEO': 'Негиздөөчү жана CEO',
-                'Head of Content': 'Контент башчысы',
-                'Lead Developer': 'Жетектөөчү иштеп чыгуучу',
-                'Partnership Manager': 'Өнөктөштүк менеджери',
-            },
         },
         notFound: {
             title: 'Барак табылган жок',
@@ -1355,5 +1339,19 @@ const translations = {
         },
     },
 };
+
+// Deep-merge newer strings from translations.extra.js over the base dictionary
+const isObject = (v) => v && typeof v === 'object' && !Array.isArray(v);
+const deepMerge = (base, override) => {
+    const out = { ...base };
+    Object.entries(override).forEach(([key, value]) => {
+        out[key] = isObject(value) && isObject(base[key]) ? deepMerge(base[key], value) : value;
+    });
+    return out;
+};
+
+Object.keys(extra).forEach((lang) => {
+    translations[lang] = deepMerge(translations[lang] || {}, extra[lang]);
+});
 
 export default translations;

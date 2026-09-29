@@ -5,9 +5,49 @@
 
 /* ===== Banner ===== */
 .unidet-banner {
-    padding: var(--spacing-10) 0 var(--spacing-8);
-    color: white;
+    padding: var(--spacing-6) 0 var(--spacing-8);
+    color: #FFFFFF;
     position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.unidet-banner__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+/* Scrim so white text stays readable on any photo */
+.unidet-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.35));
+}
+
+.unidet-banner__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: var(--spacing-6);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    opacity: 0.9;
+    transition: opacity var(--transition-fast), gap var(--transition-fast);
+}
+
+.unidet-banner__back:hover {
+    opacity: 1;
+    gap: 10px;
+}
+
+.unidet-banner__meta-link:hover {
+    text-decoration: underline;
 }
 
 .unidet-banner__inner {
@@ -18,18 +58,11 @@
 }
 
 .unidet-banner__logo {
-    width: 80px;
-    height: 80px;
+    width: 88px;
+    height: 88px;
     border-radius: var(--radius-xl);
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-2xl);
-    font-weight: 800;
-    flex-shrink: 0;
+    padding: 6px;
+    font-size: var(--font-size-lg);
 }
 
 .unidet-banner__info {
@@ -45,6 +78,7 @@
 
 .unidet-banner__meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-4);
     margin-top: var(--spacing-2);
@@ -161,6 +195,11 @@
     margin-top: var(--spacing-6);
 }
 
+.unidet-stat__icon {
+    color: var(--color-primary);
+    margin: 0 auto var(--spacing-1);
+}
+
 .unidet-stat {
     padding: var(--spacing-4);
     background: var(--color-primary-50);
@@ -170,7 +209,8 @@
 
 .unidet-stat__value {
     display: block;
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-lg);
+    line-height: 1.3;
     font-weight: 800;
     color: var(--color-primary);
 }
@@ -204,6 +244,8 @@
 }
 
 .unidet-req-card__icon {
+    color: var(--color-primary);
+    background: var(--color-primary-50);
     width: 44px;
     height: 44px;
     border-radius: var(--radius-lg);
@@ -362,8 +404,8 @@
 .unidet-tuition-card__badge {
     font-size: var(--font-size-xs);
     font-weight: 600;
-    color: #D97706;
-    background: #FFFBEB;
+    color: var(--color-warning-text);
+    background: var(--color-warning-bg);
     padding: 4px 12px;
     border-radius: var(--radius-full);
 }
@@ -487,7 +529,7 @@
 .unidet-apply-card__status {
     font-size: var(--font-size-xs);
     font-weight: 600;
-    color: #059669;
+    color: var(--color-success-text);
 }
 
 .unidet-apply-card__heart {
@@ -507,7 +549,7 @@
 }
 
 .unidet-apply-card__heart--active {
-    background: #FEF2F2;
+    background: var(--color-danger-bg);
     border-color: #FCA5A5;
 }
 
@@ -662,6 +704,300 @@
     opacity: 0.7;
 }
 
+/* ===== New content blocks ===== */
+.unidet-section {
+    scroll-margin-top: 130px;
+}
+
+.unidet-subtitle {
+    margin: var(--spacing-8) 0 var(--spacing-4);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-gray-900);
+}
+
+.unidet-section__hint {
+    margin-bottom: var(--spacing-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.unidet-callout {
+    display: flex;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-5);
+    background: var(--color-primary-50);
+    border: 1px solid var(--color-primary-100);
+    border-radius: var(--radius-xl);
+    color: var(--color-primary);
+}
+
+.unidet-callout svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.unidet-callout strong {
+    display: block;
+    margin-bottom: var(--spacing-1);
+    color: var(--color-gray-900);
+}
+
+.unidet-callout p {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+    line-height: 1.7;
+}
+
+.unidet-highlights {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-6);
+}
+
+.unidet-highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-700);
+}
+
+.unidet-highlights svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--color-success);
+}
+
+.unidet-programs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+
+.unidet-program {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-700);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-full);
+}
+
+.unidet-program svg {
+    color: var(--color-primary);
+}
+
+.unidet-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    list-style: none;
+}
+
+.unidet-step {
+    display: flex;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-5);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+}
+
+.unidet-step__num {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background: var(--color-primary);
+}
+
+.unidet-step__title {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-gray-900);
+}
+
+.unidet-step__text {
+    margin-top: 2px;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    line-height: 1.7;
+}
+
+.unidet-checklist {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.unidet-checklist li + li {
+    border-top: 1px solid var(--color-gray-100);
+}
+
+.unidet-checklist__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-5);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-700);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.unidet-checklist__item:hover {
+    background: var(--color-gray-50);
+}
+
+.unidet-checklist__item input {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--color-success);
+    cursor: pointer;
+}
+
+.unidet-checklist__item input:checked + span {
+    color: var(--color-gray-400);
+    text-decoration: line-through;
+}
+
+.unidet-related {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.unidet-related__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-xl);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.unidet-related__item:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.unidet-related__item > span {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.unidet-related__item strong {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-900);
+}
+
+.unidet-related__item small {
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-500);
+}
+
+.unidet-related__item > svg {
+    color: var(--color-primary);
+}
+
+.unidet-related__logo,
+.unidet-similar__logo {
+    width: 40px;
+    height: 40px;
+    font-size: 10px;
+    box-shadow: none;
+    border: 1px solid var(--color-gray-100);
+}
+
+.unidet-similar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.unidet-similar__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-700);
+    transition: color var(--transition-fast);
+}
+
+.unidet-similar__item:hover {
+    color: var(--color-primary);
+}
+
+.unidet-faq__question svg {
+    transition: transform var(--transition-normal);
+}
+
+.unidet-faq__chevron--open {
+    transform: rotate(180deg);
+}
+
+.unidet-apply-card__status--closed {
+    color: var(--color-warning-text);
+}
+
+.unidet-apply-card__heart {
+    color: var(--color-gray-400);
+}
+
+.unidet-apply-card__heart--active {
+    color: var(--color-error);
+}
+
+.unidet-apply-card .btn svg {
+    flex-shrink: 0;
+}
+
+.unidet-apply-card__ort {
+    display: block;
+    margin-top: var(--spacing-3);
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--color-gray-100);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+    text-align: center;
+}
+
+.unidet-notfound {
+    padding: var(--spacing-24) var(--container-padding);
+    text-align: center;
+}
+
+.unidet-notfound p {
+    margin-top: var(--spacing-3);
+    color: var(--color-gray-500);
+}
+
+.unidet-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--spacing-6);
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
     .unidet-content {
@@ -690,7 +1026,8 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .unidet-req-grid {
+    .unidet-req-grid,
+    .unidet-highlights {
         grid-template-columns: 1fr;
     }
 

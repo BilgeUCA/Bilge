@@ -1,0 +1,293 @@
+/* ===== Auth (sign in / create account) ===== */
+.auth-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse 600px 400px at 85% 10%, var(--color-primary-50), transparent),
+        var(--color-white);
+}
+
+.auth-card {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: var(--spacing-8);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.auth-card__brand {
+    display: inline-block;
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-primary);
+}
+
+.auth-card__title {
+    margin-top: var(--spacing-4);
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-gray-900);
+}
+
+.auth-card__subtitle {
+    margin-top: var(--spacing-1);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+/* Federated sign-in */
+.auth-federated {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-6);
+}
+
+.auth-federated__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    padding: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-800);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--press-duration);
+}
+
+.auth-federated__btn:hover {
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-300);
+}
+
+.auth-federated__btn:active {
+    transform: scale(0.98);
+}
+
+.auth-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-3);
+    padding: var(--spacing-3);
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-600);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-md);
+}
+
+.auth-notice svg {
+    flex-shrink: 0;
+    color: var(--color-primary);
+}
+
+/* Sign-in method divider: thin rule with "or" in the middle */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin: var(--spacing-6) 0;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-gray-400);
+    text-transform: lowercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-gray-200);
+}
+
+/* Form */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.auth-field__label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.auth-field__label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-gray-700);
+}
+
+.auth-field__aside {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-primary);
+}
+
+.auth-field__aside:hover {
+    text-decoration: underline;
+}
+
+.auth-field__box {
+    display: flex;
+    align-items: center;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+}
+
+.auth-field__box:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-50);
+}
+
+.auth-field__box.is-error {
+    border-color: var(--color-error);
+}
+
+.auth-field__box input {
+    flex: 1;
+    min-width: 0;
+    padding: var(--spacing-3);
+    font-size: var(--font-size-base);
+    color: var(--color-gray-900);
+    background: transparent;
+    border-radius: var(--radius-lg);
+}
+
+/* The wrapper draws the focus ring, not the input */
+.auth-field__box input:focus-visible {
+    outline: none;
+}
+
+.auth-field__reveal {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-right: 2px;
+    color: var(--color-gray-400);
+    border-radius: var(--radius-md);
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.auth-field__reveal:hover,
+.auth-field__reveal[aria-pressed="true"] {
+    color: var(--color-gray-700);
+    background: var(--color-gray-50);
+}
+
+.auth-field__error {
+    min-height: 1.25rem;
+    margin-top: 4px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-danger-text);
+}
+
+.auth-form__hint {
+    margin-top: -4px;
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+}
+
+.auth-form__submit {
+    margin-top: var(--spacing-3);
+}
+
+.auth-form__submit:disabled {
+    opacity: 0.7;
+    cursor: progress;
+}
+
+.auth-card__switch {
+    margin-top: var(--spacing-6);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    text-align: center;
+}
+
+.auth-card__switch a {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.auth-card__fineprint {
+    margin-top: var(--spacing-4);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--color-gray-400);
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: var(--spacing-6) var(--spacing-5);
+    }
+}
+
+/* ===== Transitions.dev — Error state shake =====
+   .t-input-wrap / .t-input get .is-error; the shake restarts by removing
+   .is-shaking, forcing a reflow, then re-adding it. After --revert-hold the
+   .is-error classes drop and border + message fade back over --revert-dur. */
+:root {
+    --shake-distance: 6px;
+    --shake-overshoot: 4px;
+    --shake-dur-a: 80ms;
+    --shake-dur-b: 60ms;
+    --shake-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --revert-hold: 3000ms;
+    --revert-dur: 280ms;
+}
+
+.t-input {
+    transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+    will-change: transform;
+}
+
+.t-input.is-error {
+    transition: border-color var(--revert-dur, 280ms) ease-out;
+}
+
+.t-error-msg {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--revert-dur, 280ms) ease-out,
+        visibility 0s linear var(--revert-dur, 280ms);
+}
+
+.t-input-wrap.is-error .t-error-msg {
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--revert-dur, 280ms) ease-out,
+        visibility 0s linear 0s;
+}
+
+/* %-stops are cumulative durations of 80, 60, 80, 60 = 280ms */
+.t-input.is-shaking {
+    animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
+}
+
+@keyframes t-input-shake {
+    0%      { transform: translateX(0);                                 animation-timing-function: var(--shake-ease); }
+    28.57%  { transform: translateX(var(--shake-distance));             animation-timing-function: var(--shake-ease); }
+    57.14%  { transform: translateX(calc(var(--shake-distance) * -1)); animation-timing-function: var(--shake-ease); }
+    78.57%  { transform: translateX(var(--shake-overshoot));            animation-timing-function: var(--shake-ease); }
+    100%    { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .t-input { animation: none !important; transform: none !important; }
+}

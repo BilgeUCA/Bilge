@@ -42,15 +42,23 @@ const Button = ({
     }
 
     if (href) {
+        // Only web links open in a new tab; mailto:/tel: stay in place
+        const external = /^https?:/.test(href);
         return (
-            <a href={href} className={classes} target="_blank" rel="noopener noreferrer" {...props}>
+            <a
+                href={href}
+                className={classes}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+                {...props}
+            >
                 {content}
             </a>
         );
     }
 
     return (
-        <button className={classes} onClick={onClick} {...props}>
+        <button type="button" className={classes} onClick={onClick} {...props}>
             {content}
         </button>
     );

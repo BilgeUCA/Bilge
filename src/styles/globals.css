@@ -28,6 +28,20 @@
   --color-warning: #F59E0B;
   --color-error: #EF4444;
 
+  /* Text on filled primary surfaces stays white in both themes */
+  --color-on-primary: #FFFFFF;
+
+  /* Status tints (tag backgrounds + readable status text) */
+  --color-success-bg: #ECFDF5;
+  --color-success-text: #059669;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-text: #D97706;
+  --color-danger-bg: #FEF2F2;
+  --color-danger-text: #DC2626;
+
+  /* Translucent navbar / sticky surfaces */
+  --color-surface-glass: rgba(255, 255, 255, 0.95);
+
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-size-xs: 0.75rem;
@@ -79,6 +93,85 @@
   /* Container */
   --container-max: 1200px;
   --container-padding: 1.5rem;
+
+  color-scheme: light dark;
+  accent-color: var(--color-primary);
+}
+
+/* ===== Dark theme =====
+   Defaults to the system preference; data-theme on <html> pins a choice
+   (set before first paint by the inline script in index.html). The same
+   token block is repeated for the pinned case because a media query and an
+   attribute selector cannot share one rule. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #3B82F6;
+    --color-primary-hover: #2563EB;
+    --color-primary-light: rgba(59, 130, 246, 0.22);
+    --color-primary-50: rgba(59, 130, 246, 0.12);
+    --color-primary-100: rgba(59, 130, 246, 0.22);
+    --color-primary-600: #3B82F6;
+    --color-primary-700: #93C5FD;
+    --color-white: #0B1120;
+    --color-gray-50: #111A2E;
+    --color-gray-100: #1C2638;
+    --color-gray-200: #273349;
+    --color-gray-300: #3A4760;
+    --color-gray-400: #7C8AA3;
+    --color-gray-500: #98A3B8;
+    --color-gray-600: #B4BDCE;
+    --color-gray-700: #CBD2DE;
+    --color-gray-800: #E2E7EF;
+    --color-gray-900: #F4F6FA;
+    --color-success-bg: rgba(16, 185, 129, 0.14);
+    --color-success-text: #34D399;
+    --color-warning-bg: rgba(245, 158, 11, 0.14);
+    --color-warning-text: #FBBF24;
+    --color-danger-bg: rgba(239, 68, 68, 0.14);
+    --color-danger-text: #F87171;
+    --color-surface-glass: rgba(11, 17, 32, 0.9);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.55), 0 8px 10px -6px rgba(0, 0, 0, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-primary: #3B82F6;
+  --color-primary-hover: #2563EB;
+  --color-primary-light: rgba(59, 130, 246, 0.22);
+  --color-primary-50: rgba(59, 130, 246, 0.12);
+  --color-primary-100: rgba(59, 130, 246, 0.22);
+  --color-primary-600: #3B82F6;
+  --color-primary-700: #93C5FD;
+  --color-white: #0B1120;
+  --color-gray-50: #111A2E;
+  --color-gray-100: #1C2638;
+  --color-gray-200: #273349;
+  --color-gray-300: #3A4760;
+  --color-gray-400: #7C8AA3;
+  --color-gray-500: #98A3B8;
+  --color-gray-600: #B4BDCE;
+  --color-gray-700: #CBD2DE;
+  --color-gray-800: #E2E7EF;
+  --color-gray-900: #F4F6FA;
+  --color-success-bg: rgba(16, 185, 129, 0.14);
+  --color-success-text: #34D399;
+  --color-warning-bg: rgba(245, 158, 11, 0.14);
+  --color-warning-text: #FBBF24;
+  --color-danger-bg: rgba(239, 68, 68, 0.14);
+  --color-danger-text: #F87171;
+  --color-surface-glass: rgba(11, 17, 32, 0.9);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.55), 0 8px 10px -6px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* ===== Reset & Base ===== */
@@ -103,6 +196,12 @@ body {
   color: var(--color-gray-800);
   background-color: var(--color-white);
   overflow-x: hidden;
+}
+
+/* Keyboard focus ring for every interactive element */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 a {
@@ -144,6 +243,11 @@ textarea {
 
 .section {
   padding: var(--spacing-20) 0;
+}
+
+/* Shared page shell for simple content pages (login, contact, legal) */
+.page-shell {
+  padding: calc(64px + var(--spacing-12)) 0 var(--spacing-20);
 }
 
 .sr-only {

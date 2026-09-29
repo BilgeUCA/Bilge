@@ -5,6 +5,18 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    // Apply a pinned theme before first paint so there is no flash.
+    // Without a saved choice the CSS follows the system preference.
+    try {
+      var theme = localStorage.getItem("bilge.theme");
+      if (theme === "light" || theme === "dark") {
+        document.documentElement.setAttribute("data-theme", theme);
+        document.querySelector("meta[name=color-scheme]").content = theme;
+      }
+    } catch (e) {}
+  </script>
   <meta name="description"
     content="BILGE - Your pathway to higher education in Kyrgyzstan. Find universities, prepare for ORT exams, and discover scholarship opportunities." />
   <link rel="preconnect" href="https://fonts.googleapis.com">

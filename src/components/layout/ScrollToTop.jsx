@@ -5,7 +5,8 @@ const ScrollToTop = () => {
     const { pathname } = useLocation();
 
     useEffect(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        // Jump instantly: a smooth scroll would visibly travel through the old page
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }, [pathname]);
 
     return null;

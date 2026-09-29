@@ -693,3 +693,142 @@
         flex-direction: column;
     }
 }
+/* ===== Tabs content: practice + progress ===== */
+.ort-page__single {
+    max-width: 820px;
+    padding-top: var(--spacing-8);
+    padding-bottom: var(--spacing-16);
+}
+
+.ort-subject-row {
+    width: 100%;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+}
+
+.ort-subject-row:hover .ort-subject-row__arrow {
+    color: var(--color-primary);
+    transform: translateX(3px);
+}
+
+.ort-subject-row__arrow {
+    transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.ort-icon--blue {
+    color: #2563EB;
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.ort-icon--violet {
+    color: #7C3AED;
+    background: rgba(124, 58, 237, 0.1);
+}
+
+.ort-resource-item__link {
+    font: inherit;
+    color: inherit;
+    text-align: left;
+}
+
+.ort-resource-item__link:hover {
+    text-decoration: underline;
+}
+
+.ort-resource-item__link::after {
+    /* Stretch the click target over the whole row */
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.ort-resource-item {
+    position: relative;
+}
+
+.ort-progress {
+    padding: var(--spacing-8);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-2xl);
+}
+
+.ort-progress__title {
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    color: var(--color-gray-900);
+    letter-spacing: -0.02em;
+}
+
+.ort-progress__empty,
+.ort-progress__best {
+    margin: var(--spacing-2) 0 var(--spacing-6);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.ort-progress__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-6);
+}
+
+.ort-progress__row {
+    display: grid;
+    grid-template-columns: 130px 90px 1fr 48px;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600);
+}
+
+.ort-progress__bar {
+    height: 8px;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.ort-progress__bar span {
+    display: block;
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: inherit;
+}
+
+.ort-progress__pct {
+    text-align: right;
+    color: var(--color-gray-900);
+}
+
+.ort-progress__note {
+    margin-top: var(--spacing-5);
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-400);
+}
+
+.ort-progress__note a {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+@media (max-width: 580px) {
+    .ort-progress {
+        padding: var(--spacing-5);
+    }
+
+    .ort-progress__row {
+        grid-template-columns: 1fr 48px;
+    }
+
+    .ort-progress__bar {
+        grid-column: 1 / -1;
+        order: 3;
+    }
+
+    .ort-progress__subject {
+        display: none;
+    }
+}

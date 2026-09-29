@@ -39,7 +39,13 @@
 }
 
 .sch-page__ort-icon {
-    font-size: var(--font-size-2xl);
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    color: var(--color-primary);
+    background: var(--color-primary-50);
 }
 
 .sch-page__ort-banner strong {
@@ -59,7 +65,7 @@
     padding: var(--spacing-2) var(--spacing-4);
     font-size: var(--font-size-sm);
     font-weight: 600;
-    color: var(--color-white);
+    color: var(--color-on-primary);
     background: var(--color-primary);
     border-radius: var(--radius-full);
     transition: all var(--transition-fast);
@@ -144,6 +150,45 @@
     color: var(--color-gray-800);
 }
 
+.sch-page__dropdown--active {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.sch-page__select select {
+    appearance: none;
+    padding: var(--spacing-3) var(--spacing-10) var(--spacing-3) var(--spacing-4);
+    font-family: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-700);
+    background: var(--color-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239CA3AF' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.sch-page__select select:hover {
+    border-color: var(--color-gray-300);
+}
+
+.sch-page__count {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.sch-page__clear {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
 /* ===== List ===== */
 .sch-page__list {
     padding: var(--spacing-8) 0 var(--spacing-16);
@@ -174,11 +219,53 @@
 
 .sch-card__image {
     position: relative;
-    height: 140px;
+    height: 150px;
     padding: var(--spacing-3);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.sch-card__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    transition: transform var(--transition-slow);
+}
+
+.sch-card__image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.1));
+    pointer-events: none;
+}
+
+.sch-card:hover .sch-card__photo {
+    transform: scale(1.04);
+}
+
+.sch-card__logo {
+    position: absolute;
+    left: var(--spacing-3);
+    bottom: var(--spacing-3);
+    width: 52px;
+    height: 52px;
+}
+
+.sch-card__name-link {
+    color: inherit;
+    transition: color var(--transition-fast);
+}
+
+.sch-card__name-link:hover {
+    color: var(--color-primary);
 }
 
 .sch-card__country {
@@ -188,7 +275,7 @@
     padding: 4px 10px;
     font-size: var(--font-size-xs);
     font-weight: 600;
-    color: var(--color-white);
+    color: var(--color-on-primary);
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(4px);
     border-radius: var(--radius-full);
@@ -243,18 +330,18 @@
 }
 
 .sch-card__tag--success {
-    color: #059669;
-    background: #ECFDF5;
+    color: var(--color-success-text);
+    background: var(--color-success-bg);
 }
 
 .sch-card__tag--warning {
-    color: #D97706;
-    background: #FFFBEB;
+    color: var(--color-warning-text);
+    background: var(--color-warning-bg);
 }
 
 .sch-card__tag--info {
-    color: #2563EB;
-    background: #DBEAFE;
+    color: var(--color-primary);
+    background: var(--color-primary-100);
 }
 
 .sch-card__name {
@@ -303,7 +390,7 @@
 }
 
 .sch-card__meta-value--urgent {
-    color: #DC2626;
+    color: var(--color-danger-text);
 }
 
 .sch-card__footer {
@@ -319,8 +406,13 @@
     color: var(--color-gray-400);
 }
 
+.sch-card__status--open {
+    color: var(--color-success-text);
+    font-weight: 600;
+}
+
 .sch-card__status--danger {
-    color: #DC2626;
+    color: var(--color-danger-text);
     font-weight: 500;
 }
 
@@ -344,6 +436,16 @@
     text-align: center;
     padding: var(--spacing-16) 0;
     color: var(--color-gray-400);
+}
+
+.sch-page__empty .uni-page__empty-btn {
+    margin-top: var(--spacing-4);
+    padding: var(--spacing-2) var(--spacing-6);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+    border-radius: var(--radius-lg);
 }
 
 /* ===== Responsive ===== */

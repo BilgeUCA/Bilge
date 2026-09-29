@@ -19,7 +19,7 @@ const HowItWorksSection = () => {
                                 {t('howItWorks.subtitle')}
                             </p>
                         </div>
-                        <Link to="/about" className="how-it-works__guide-link">
+                        <Link to="/universities" className="how-it-works__guide-link">
                             {t('howItWorks.readGuide')}
                             <ArrowRight size={16} />
                         </Link>
