@@ -128,8 +128,10 @@
     border-radius: 48px;
     z-index: 1;
     transition: color var(--tabs-dur) var(--tabs-ease);
+    font-family: inherit;
     font-size: var(--font-size-sm);
     font-weight: 500;
+    text-transform: none;
 }
 
 .t-tab:not([aria-selected="true"]):hover,
@@ -173,12 +175,14 @@
 
 .navbar__lang-btn {
     padding: var(--spacing-1) var(--spacing-2);
+    font-family: inherit;
     font-size: var(--font-size-sm);
     font-weight: 500;
     color: var(--color-gray-400);
     border: none;
     background: transparent;
     border-radius: var(--radius-sm);
+    text-transform: none;
     transition: color var(--transition-fast);
     cursor: pointer;
 }

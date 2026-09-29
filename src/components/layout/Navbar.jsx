@@ -20,24 +20,34 @@ const Navbar = () => {
         { path: '/about', label: t('navbar.about') },
     ];
 
-    // Update language button pill position
-    const updatePillPosition = (tabsContainer, pillElement) => {
+    // Update language button pill position.
+    // animate=false snaps instantly (initial mount / resize), animate=true
+    // lets the existing CSS transition tween between positions (language change).
+    const updatePillPosition = (tabsContainer, pillElement, animate = false) => {
         if (!tabsContainer || !pillElement) return;
 
         const activeTab = tabsContainer.querySelector('[aria-selected="true"]');
         if (!activeTab) return;
 
-        // Disable transition for snap to position
-        pillElement.style.transition = 'none';
-        pillElement.style.transform = `translateX(${activeTab.offsetLeft}px)`;
-        pillElement.style.width = `${activeTab.offsetWidth}px`;
+        const left = activeTab.offsetLeft;
+        const width = activeTab.offsetWidth;
 
-        // Force reflow
-        void pillElement.offsetHeight;
+        if (!animate) {
+            // Disable transition for snap to position
+            pillElement.style.transition = 'none';
+            pillElement.style.transform = `translateX(${left}px)`;
+            pillElement.style.width = `${width}px`;
 
-        // Re-enable transition
-        pillElement.style.transition =
-            'transform 250ms cubic-bezier(0.22, 1, 0.36, 1), width 250ms cubic-bezier(0.22, 1, 0.36, 1)';
+            // Force reflow
+            void pillElement.offsetHeight;
+
+            // Re-enable transition
+            pillElement.style.transition =
+                'transform 250ms cubic-bezier(0.22, 1, 0.36, 1), width 250ms cubic-bezier(0.22, 1, 0.36, 1)';
+        } else {
+            pillElement.style.transform = `translateX(${left}px)`;
+            pillElement.style.width = `${width}px`;
+        }
     };
 
     useEffect(() => {
@@ -52,15 +62,20 @@ const Navbar = () => {
         setIsMobileOpen(false);
     }, [location]);
 
-    // Initialize and update pill position for desktop
+    // Initialize and update pill position for desktop.
+    // The first run (mount) snaps into place; later runs (language change) animate.
+    const hasMountedDesktopPill = useRef(false);
     useEffect(() => {
-        updatePillPosition(langTabsRef.current, langPillRef.current);
+        updatePillPosition(langTabsRef.current, langPillRef.current, hasMountedDesktopPill.current);
+        hasMountedDesktopPill.current = true;
     }, [language]);
 
     // Initialize and update pill position for mobile
+    const hasMountedMobilePill = useRef(false);
     useEffect(() => {
         const mobileLangTabs = document.querySelector('.navbar__lang-mobile');
-        updatePillPosition(mobileLangTabs, mobileLangPillRef.current);
+        updatePillPosition(mobileLangTabs, mobileLangPillRef.current, hasMountedMobilePill.current);
+        hasMountedMobilePill.current = true;
     }, [language, isMobileOpen]);
 
     // Handle window resize
@@ -99,7 +114,7 @@ const Navbar = () => {
                     </ul>
 
                     <div className="navbar__actions-mobile">
-                        <div className="navbar__lang navbar__lang-mobile" role="tablist">
+                        <div className="navbar__lang navbar__lang-mobile t-tabs" role="tablist">
                             <span className="t-tabs-pill" ref={mobileLangPillRef}></span>
                             {availableLanguages.map((lang) => (
                                 <button

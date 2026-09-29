@@ -10,9 +10,9 @@ const translations = {
             about: 'About',
             login: 'Log in',
             languageNames: {
-                EN: 'EN',
-                RU: 'РУ',
-                KG: 'КГ',
+                EN: 'en',
+                RU: 'ру',
+                KG: 'кг',
             },
         },
         footer: {
@@ -461,9 +461,9 @@ const translations = {
             about: 'О нас',
             login: 'Войти',
             languageNames: {
-                EN: 'EN',
-                RU: 'РУ',
-                KG: 'КГ',
+                EN: 'en',
+                RU: 'ру',
+                KG: 'кг',
             },
         },
         footer: {
@@ -912,9 +912,9 @@ const translations = {
             about: 'Биз жөнүндө',
             login: 'Кирүү',
             languageNames: {
-                EN: 'EN',
-                RU: 'РУ',
-                KG: 'КГ',
+                EN: 'en',
+                RU: 'ру',
+                KG: 'кг',
             },
         },
         footer: {
