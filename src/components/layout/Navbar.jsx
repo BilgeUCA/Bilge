@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useTranslation } from '../../i18n/useLanguage';
@@ -7,7 +7,10 @@ import LanguageTabs from '../ui/LanguageTabs';
 import ThemeToggle from '../ui/ThemeToggle';
 import './Navbar.css';
 
-const initialsOf = (name = '') =>
+// Scroll distance (px) after which the header switches to its compact state
+const COMPACT_THRESHOLD = 40;
+
+const initialsOf =(name = '') =>
     name
         .split(/\s+/)
         .filter(Boolean)
@@ -18,6 +21,7 @@ const initialsOf = (name = '') =>
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const progressRef = useRef(null);
     const { t } = useTranslation();
     const { user } = useAuth();
     const location = useLocation();
@@ -29,11 +33,30 @@ const Navbar = () => {
         { path: '/about', label: t('navbar.about') },
     ];
 
+    // Compact the header past the threshold and track reading progress.
+    // The progress width is written straight to the DOM so scrolling never re-renders;
+    // setIsScrolled only re-renders when the boolean actually flips.
     useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 10);
-        handleScroll();
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
+        let frame = 0;
+        const update = () => {
+            frame = 0;
+            const y = window.scrollY;
+            setIsScrolled(y > COMPACT_THRESHOLD);
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const ratio = max > 0 ? Math.min(y / max, 1) : 0;
+            if (progressRef.current) progressRef.current.style.width = `${ratio * 100}%`;
+        };
+        const schedule = () => {
+            if (!frame) frame = requestAnimationFrame(update);
+        };
+        update();
+        window.addEventListener('scroll', schedule, { passive: true });
+        window.addEventListener('resize', schedule, { passive: true });
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', schedule);
+            window.removeEventListener('resize', schedule);
+        };
     }, []);
 
     // Close the drawer on navigation (state adjusted during render, not in an effect)
@@ -89,7 +112,8 @@ const Navbar = () => {
 
     return (
         <>
-            <header className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`} id="navbar">
+            {/* The open drawer forces the compact state so it lines up under a solid bar */}
+            <header className={`navbar ${isScrolled || isMobileOpen ? 'navbar--compact' : ''}`} id="navbar">
                 <div className="container navbar__inner">
                     <Link to="/" className="navbar__logo" id="logo">
                         <span className="navbar__logo-text">BILGE</span>
@@ -123,10 +147,12 @@ const Navbar = () => {
                         </span>
                     </button>
                 </div>
+
+                <div className="navbar__progress" ref={progressRef} aria-hidden="true" />
             </header>
 
-            {/* The drawer lives outside <header>: the header's backdrop-filter would
-                otherwise become the containing block for these fixed elements */}
+            {/* The drawer lives outside <header> so it's positioned against the viewport,
+                not against the header's changing height */}
             <div
                 className={`navbar__overlay ${isMobileOpen ? 'navbar__overlay--visible' : ''}`}
                 onClick={() => setIsMobileOpen(false)}

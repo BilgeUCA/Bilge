@@ -12,7 +12,7 @@ The look is calm and editorial, and most of the "polish" comes from motion. Five
 
 1. **White space and grayscale first, one blue accent.** Surfaces are white or `gray-50`. Text is a gray ramp. Blue (`#2563EB`) marks what's interactive or important: links, the primary CTA, active states, tags, key numbers. Nothing else competes with it.
 2. **Borders, not shadows, at rest.** Cards sit flat with a 1px `gray-100` border. Shadows show up **only on hover** to signal "this lifts / is clickable".
-3. **Soft, generous geometry.** Radii of 12–16px on cards, full pills for badges and tags, 64px navbar, 80px (`spacing-20`) section rhythm.
+3. **Soft, generous geometry.** Radii of 12–16px on cards, full pills for badges and tags, 88px → 60px navbar, 80px (`spacing-20`) section rhythm.
 4. **Feedback on press, not on release** (Apple's fluid-interface principle; see the `SKILL.md` one level up). Every clickable element has an `:active` state that fires in 100ms.
 5. **One easing curve everywhere.** A spring-like `cubic-bezier(0.22, 1, 0.36, 1)`: fast start, long soft settle. It's used for all transitions, reveals, and the tab pill.
 
@@ -187,7 +187,7 @@ Inter only, with antialiasing on (`-webkit-font-smoothing: antialiased`). Body `
 
 - **Container:** `max-width: 1200px; margin: 0 auto; padding: 0 1.5rem`.
 - **Section rhythm:** `.section { padding: 5rem 0 }`. Alternate `white` / `gray-50` backgrounds between sections instead of using dividers.
-- **Fixed navbar is 64px**, so every page's first block starts with `padding-top: calc(64px + var(--spacing-10 or 16))`.
+- **Fixed navbar is 88px at rest** (`--navbar-height`), so every page's first block starts with `padding-top: calc(var(--navbar-height) + var(--spacing-10 or 16))`.
 - **Grids:** CSS Grid with `gap: var(--spacing-6)` (24px). Card grids are 3 or 4 columns on desktop.
 - **Sidebar layouts:** `grid-template-columns: 240px 1fr` (filters) or `1fr 340px` (detail page). Sidebars are `position: sticky; top: 80px` (navbar + 16px).
 - **Section header pattern:** title + subtitle on the left, a quiet text link ("View all →") on the right, `justify-content: space-between`, `margin-bottom: spacing-10/12`.
@@ -316,17 +316,19 @@ A 48×48 icon tile (`radius-lg`, `gray-50` bg, `gray-100` border, `gray-700` ico
 
 ### 6.7 Navbar
 
-- `position: fixed`, 64px tall, `z-index: 1000`.
-- **Frosted glass:** `background: rgba(255,255,255,.95); backdrop-filter: blur(12px)`.
-- After `scrollY > 10` it gets `.navbar--scrolled`: a hairline shadow `0 1px 3px rgba(0,0,0,.08)` and bg `.98`. The navbar has no border at the top of the page and only separates itself once content scrolls under it.
-- Wordmark on the left (800, primary). Links in the center are `sm`/500 `gray-600`, with a `gray-50` bg on hover and `primary` on `primary-50` when active (pill-ish `radius-md`).
-- On the right: the **segmented language switcher** (§7.3) and a primary "Log in" button.
-- **Under 868px:** a 300px drawer slides in from the right (`right: -100%` → `0`, `transition-slow`) with `shadow-xl`, plus a `rgba(0,0,0,.3)` overlay that fades in. The hamburger morphs into ✕ (§7.4). Actions move to the bottom of the drawer (`margin-top: auto`) and become full width.
-- Falls back to solid white under `prefers-reduced-transparency: reduce`.
+- `position: fixed`, `z-index: 1000`. Two states, toggled by one class (`.navbar--compact`) on the `<header>`:
+  - **At rest (top of page):** 88px tall (`--navbar-height`), transparent background, no border or shadow, a large `3xl` wordmark, `base`-size links spaced `spacing-4` apart, and an **outline** `gray-900` "Log in" button.
+  - **Compact (`scrollY > 40`, or while the mobile drawer is open):** 60px tall (`--navbar-height-compact`), `white` background, `gray-100` hairline bottom border, a soft shadow `0 4px 16px -8px rgba(0,0,0,.12)`, an `xl` wordmark, `sm` links, and a **filled** `gray-900` button. In both states the button turns `primary` blue on hover.
+  - Height, background, border, shadow, font sizes and link gap all transition with `transition-normal`.
+- **Reading progress:** a 2px `primary` (blue) line pinned to the header's bottom edge. The scroll handler (passive, rAF-throttled) writes its `width` straight to the DOM as `scrollY / (scrollHeight - innerHeight)`, so scrolling never re-renders React.
+- Wordmark on the left (800, primary). Links are 500 `gray-600`, with a `gray-50` bg on hover and `primary` on `primary-50` when active (pill-ish `radius-md`).
+- On the right: the **segmented language switcher** (§7.3), the theme toggle, and the "Log in" button (or the account pill when signed in).
+- **Under 868px:** a 320px drawer slides in from the right under the compact bar (`top: var(--navbar-height-compact)`, `transition-slow`) with `shadow-xl`, plus a `rgba(0,0,0,.35)` overlay that fades in. The hamburger morphs into ✕ (§7.4). Actions move to the bottom of the drawer (`margin-top: auto`) and become full width.
+- Under `prefers-reduced-motion: reduce` the state change is instant.
 
 ### 6.8 Sub-navigation tabs (inner pages)
 
-A sticky bar under the navbar (`top: 64px`, `z-index: 40–50`, white, `gray-100/200` bottom border). Two styles are used:
+A sticky bar under the compact navbar (`top: var(--navbar-height-compact)`, `z-index: 40–50`, white, `gray-100/200` bottom border). Two styles are used:
 - **Underline tabs:** `gray-500` text. The active tab gets `primary` text, weight 600, and a 2px primary bottom border. Scrolls horizontally on mobile (`overflow-x: auto`).
 - **Floating-bar tabs:** the active tab gets an `::after` 2px pill bar under it.
 
@@ -568,11 +570,6 @@ These are built into the system. Keep them when porting.
 @media (prefers-contrast: more) {
   :root { --color-gray-500: #4B5563; --color-gray-400: #374151; }
 }
-
-/* Reduced transparency: glass becomes solid */
-@media (prefers-reduced-transparency: reduce) {
-  .navbar { background: #fff; backdrop-filter: none; }
-}
 ```
 
 - `SectionReveal` still fades under reduced motion (0.2s, no travel), so users get "gentler" motion rather than none.
@@ -612,7 +609,7 @@ These are built into the system. Keep them when porting.
 3. Swap the `--color-primary-*` scale and the hard-coded `rgba(37,99,235,…)` tints if the brand color changes.
 4. Rebuild `Button` (§6.1) and `SectionReveal` (§7.2) first, since almost everything else depends on them.
 5. Use the card recipe (§6) for every surface: border at rest, lift + shadow on hover, press on `:active`.
-6. Add the frosted fixed navbar (§6.7) with its scroll-shadow and mobile drawer, plus the segmented control (§7.3) and icon morph (§7.4).
+6. Add the fixed navbar (§6.7) with its tall-to-compact scroll states, reading-progress line and mobile drawer, plus the segmented control (§7.3) and icon morph (§7.4).
 7. Keep the timing table (§7.1). Don't add new durations or easings without a reason.
 8. Test with reduced motion, higher contrast, and reduced transparency turned on, and at 480 / 768 / 1024px.
 

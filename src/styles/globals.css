@@ -94,6 +94,10 @@
   --container-max: 1200px;
   --container-padding: 1.5rem;
 
+  /* Navbar: tall at rest, compact once the page scrolls */
+  --navbar-height: 88px;
+  --navbar-height-compact: 60px;
+
   color-scheme: light dark;
   accent-color: var(--color-primary);
 }
@@ -247,7 +251,7 @@ textarea {
 
 /* Shared page shell for simple content pages (login, contact, legal) */
 .page-shell {
-  padding: calc(64px + var(--spacing-12)) 0 var(--spacing-20);
+  padding: calc(var(--navbar-height) + var(--spacing-12)) 0 var(--spacing-20);
 }
 
 .sr-only {

@@ -1,5 +1,5 @@
 .about-page__hero {
-    padding: calc(64px + var(--spacing-16)) 0 var(--spacing-12);
+    padding: calc(var(--navbar-height) + var(--spacing-16)) 0 var(--spacing-12);
     background: var(--color-gray-50);
 }
 
