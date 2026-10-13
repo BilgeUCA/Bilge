@@ -2,6 +2,12 @@
 :root {
   /* Primary Colors */
   --color-primary: #2563EB;
+
+  /* Logo (brand/logo/GUIDELINES.md) */
+  --logo-page: #2563EB;
+  --logo-sun: #F59E0B;
+  --logo-ink: #111827;
+
   --color-primary-hover: #1D4ED8;
   --color-primary-light: #DBEAFE;
   --color-primary-50: #EFF6FF;
@@ -110,6 +116,8 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-primary: #3B82F6;
+    --logo-page: #FFFFFF;
+    --logo-ink: #FFFFFF;
     --color-primary-hover: #2563EB;
     --color-primary-light: rgba(59, 130, 246, 0.22);
     --color-primary-50: rgba(59, 130, 246, 0.12);
@@ -143,6 +151,8 @@
 
 :root[data-theme="dark"] {
   --color-primary: #3B82F6;
+  --logo-page: #FFFFFF;
+  --logo-ink: #FFFFFF;
   --color-primary-hover: #2563EB;
   --color-primary-light: rgba(59, 130, 246, 0.22);
   --color-primary-50: rgba(59, 130, 246, 0.12);

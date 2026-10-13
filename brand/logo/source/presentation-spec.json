@@ -1,0 +1,40 @@
+{
+  "brand": "bilge",
+  "tagline": "Universities, scholarships and ORT prep for Kyrgyzstan",
+  "brief": "A web app where Kyrgyz school-leavers explore universities, find scholarships and prepare for the ORT. The identity should feel trustworthy, hopeful, local and modern, and sit inside the app's calm, editorial UI with one blue accent.",
+  "adjectives": ["trustworthy", "hopeful", "local", "modern", "clear"],
+  "criteria": "Success: reads as education + Kyrgyzstan without a graduation cap, recognisable at 16 px, works in one colour, fits the existing #2563EB UI.",
+  "industry": "education",
+  "nav": ["Universities", "Scholarships", "ORT"],
+  "brand_color": "#2563EB",
+  "greyscale": false,
+  "final": true,
+  "designer": "BILGE",
+  "round": 2,
+  "concepts": [
+    {
+      "name": "Book Peaks",
+      "symbol": "../master/bilge-symbol.svg",
+      "lockup": "../master/bilge-horizontal.svg",
+      "stacked": "../master/bilge-stacked.svg",
+      "symbol_on_tile": "../master/bilge-symbol-on-tile.svg",
+      "stacked_on_tile": "../master/bilge-stacked-on-tile.svg",
+      "symbol_on_dark": "../master/bilge-symbol-reversed.svg",
+      "lockup_on_dark": "../master/bilge-horizontal-reversed.svg",
+      "stacked_on_dark": "../master/bilge-stacked-reversed.svg",
+      "idea": "An open book whose pages rise into the Ala-Too peaks, with the sun coming up between them: knowledge is the climb, and the view is the future.",
+      "rationale": [
+        "Book + mountains + sun says 'education in Kyrgyzstan' at a glance, for students and parents alike",
+        "Second reading: a figure raising both arms, the moment you get in",
+        "Built on exact 60° and 15° angles; a dedicated small-size cut keeps the spine and sun at 16 px",
+        "Bilge Blue is the app's own #2563EB; Kun Amber sun is the single warm accent"
+      ]
+    }
+  ],
+  "recommendation": "Book Peaks: final artwork, colour, lockups, icon set and usage guide.",
+  "next_steps": [
+    "Swap the favicon and navbar logo in the app",
+    "Trademark search (KG Patent + WIPO Global Brand Database)",
+    "Extend: a peak/sun pattern and icon style for scholarships, universities and ORT sections"
+  ]
+}

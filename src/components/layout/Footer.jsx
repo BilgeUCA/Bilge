@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../../i18n/useLanguage';
+import BrandLogo from '../ui/BrandLogo';
 import './Footer.css';
 
 const Footer = () => {
@@ -30,7 +31,7 @@ const Footer = () => {
                 <div className="footer__top">
                     <div className="footer__brand">
                         <Link to="/" className="footer__logo">
-                            <span className="footer__logo-text">BILGE</span>
+                            <BrandLogo className="footer__logo-mark" />
                         </Link>
                         <p className="footer__description">
                             {t('footer.description')}

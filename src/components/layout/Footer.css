@@ -29,11 +29,10 @@
     margin-bottom: var(--spacing-3);
 }
 
-.footer__logo-text {
-    font-size: var(--font-size-xl);
-    font-weight: 800;
-    color: var(--color-primary);
-    letter-spacing: -0.02em;
+.footer__logo-mark {
+    display: block;
+    height: 28px;
+    width: auto;
 }
 
 .footer__description {

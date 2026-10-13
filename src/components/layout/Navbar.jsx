@@ -5,6 +5,7 @@ import { useTranslation } from '../../i18n/useLanguage';
 import { useAuth } from '../../auth/authContext';
 import LanguageTabs from '../ui/LanguageTabs';
 import ThemeToggle from '../ui/ThemeToggle';
+import BrandLogo from '../ui/BrandLogo';
 import './Navbar.css';
 
 // Scroll distance (px) after which the header switches to its compact state
@@ -116,7 +117,7 @@ const Navbar = () => {
             <header className={`navbar ${isScrolled || isMobileOpen ? 'navbar--compact' : ''}`} id="navbar">
                 <div className="container navbar__inner">
                     <Link to="/" className="navbar__logo" id="logo">
-                        <span className="navbar__logo-text">BILGE</span>
+                        <BrandLogo className="navbar__logo-mark" />
                     </Link>
 
                     <nav className="navbar__nav" aria-label={t('navbar.mainNav')}>
