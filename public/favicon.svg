@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#2563EB"/>
-  <text x="16" y="22" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-size="16" font-weight="800">B</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><title>BILGE logo</title><g transform="translate(-2.05 -3) scale(1.016)"><path fill="#2563EB" d="M74.24,36.16L117.92,111.82L117.92,218.19L7.04,188.48ZM181.76,36.16L138.08,111.82L138.08,218.19L248.96,188.48Z"/><circle fill="#F59E0B" cx="128" cy="53.12" r="23.52"/></g></svg>

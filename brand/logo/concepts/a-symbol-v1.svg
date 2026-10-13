@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+<rect x="64" y="28" width="30" height="136" fill="#111"/><path fill-rule="evenodd" fill="#111" d="M64,164a64,64 0 1,0 128,0a64,64 0 1,0 -128,0zM94,164a34,34 0 1,0 68,0a34,34 0 1,0 -68,0z"/><path d="M113,128Q109,164 113,200 M92,149Q128,145 164,149 M128,128Q128,164 128,200 M92,164Q128,164 164,164 M143,128Q147,164 143,200 M92,179Q128,183 164,179" fill="none" stroke="#111" stroke-width="8"/>
+</svg>

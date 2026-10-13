@@ -48,7 +48,7 @@
 @media (prefers-reduced-motion: reduce) {
     .navbar,
     .navbar__inner,
-    .navbar__logo-text,
+    .navbar__logo-mark,
     .navbar__links,
     .navbar__link,
     .navbar__login-btn {
@@ -63,16 +63,15 @@
     flex-shrink: 0;
 }
 
-.navbar__logo-text {
-    font-size: var(--font-size-3xl);
-    font-weight: 800;
-    color: var(--color-primary);
-    letter-spacing: -0.02em;
-    transition: font-size var(--transition-normal);
+.navbar__logo-mark {
+    display: block;
+    height: 36px;
+    width: auto;
+    transition: height var(--transition-normal);
 }
 
-.navbar--compact .navbar__logo-text {
-    font-size: var(--font-size-xl);
+.navbar--compact .navbar__logo-mark {
+    height: 26px;
 }
 
 .navbar__nav {
