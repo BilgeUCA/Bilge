@@ -48,3 +48,6 @@ The logo, **Book Peaks**, is an open book whose pages rise into the Ala-Too moun
 - How to use the logo: [`brand/logo/GUIDELINES.md`](brand/logo/GUIDELINES.md)
 - Colours: Bilge Blue `#2563EB` · Kun Amber `#F59E0B` · Ink `#111827`
 - In the app, use the [`BrandLogo`](src/components/ui/BrandLogo.jsx) component; it switches to the reversed logo in dark mode.
+
+
+aizhi krasava
