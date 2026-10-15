@@ -26,8 +26,10 @@
     align-items: center;
     justify-content: space-between;
     height: var(--navbar-height);
-    gap: var(--spacing-6);
-    transition: height var(--transition-normal), padding var(--transition-normal);
+    width: 100%;
+    padding: 0 var(--container-padding);
+    position: relative; /* anchor for absolutely-centred nav */
+    transition: height var(--transition-normal);
 }
 
 .navbar--compact .navbar__inner {
@@ -61,6 +63,8 @@
     align-items: center;
     gap: var(--spacing-2);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1; /* stay above the absolute nav on narrow screens */
 }
 
 .navbar__logo-mark {
@@ -75,8 +79,17 @@
 }
 
 .navbar__nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
+    /* pointer-events on children only so the invisible hit-area doesn't block clicks */
+    pointer-events: none;
+}
+
+.navbar__nav > * {
+    pointer-events: auto;
 }
 
 .navbar__links {
@@ -126,8 +139,11 @@
 .navbar__actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1; /* stay above the absolute nav on narrow screens */
+    margin-left: auto; /* push firmly to the right edge */
 }
 
 /* ===== Tabs Animation Styles ===== */
@@ -206,14 +222,166 @@
     }
 }
 
-.navbar__lang--full {
+/* ===== Globe language switcher ===== */
+.lang-globe {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.lang-globe__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--color-gray-600);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    font-family: inherit;
+    transition:
+        color var(--transition-fast),
+        background var(--transition-fast),
+        border-color var(--transition-fast);
+    white-space: nowrap;
+}
+
+.lang-globe__trigger:hover,
+.lang-globe--open .lang-globe__trigger {
+    color: var(--color-gray-900);
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-200);
+}
+
+.lang-globe__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.lang-globe--open .lang-globe__icon {
+    transform: rotate(15deg);
+}
+
+.lang-globe__current {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* Dropdown panel */
+.lang-globe__dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 150px;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-150, var(--color-gray-200));
+    border-radius: var(--radius-lg, var(--radius-md));
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,.14);
+    padding: 5px;
     display: flex;
+    flex-direction: column;
+    gap: 2px;
+    /* Hidden by default; shown when .lang-globe--open */
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+    pointer-events: none;
+    transition:
+        opacity 200ms var(--tabs-ease, ease),
+        transform 200ms var(--tabs-ease, ease);
+    z-index: 1200;
+}
+
+.lang-globe--open .lang-globe__dropdown {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Individual language option */
+.lang-globe__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--radius-md) - 2px);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-gray-700);
+    text-align: left;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
     width: 100%;
 }
 
-.navbar__lang--full .t-tab {
+.lang-globe__option:hover {
+    background: var(--color-gray-50);
+    color: var(--color-gray-900);
+}
+
+.lang-globe__option--active {
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.lang-globe__option--active:hover {
+    background: var(--color-primary-100, var(--color-primary-50));
+}
+
+.lang-globe__option-name {
     flex: 1;
 }
+
+.lang-globe__check {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--color-primary);
+}
+
+/* Inside the mobile drawer, show as a block switcher */
+.navbar__lang--full.lang-globe {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.navbar__lang--full .lang-globe__trigger {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    border-color: var(--color-gray-200);
+    background: var(--color-gray-50);
+}
+
+.navbar__lang--full .lang-globe__dropdown {
+    position: static;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    box-shadow: none;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    margin-top: 4px;
+    display: none;
+}
+
+.navbar__lang--full.lang-globe--open .lang-globe__dropdown {
+    display: flex;
+}
+
 
 /* ===== Login / account ===== */
 .navbar__login-btn {
@@ -355,8 +523,16 @@
 }
 
 @media (max-width: 868px) {
-    .navbar__nav,
-    .navbar__actions {
+    /* Hide the desktop nav links */
+    .navbar__nav {
+        display: none;
+    }
+
+    /* Hide globe, theme toggle, and login — show only the hamburger */
+    .navbar__actions .lang-globe,
+    .navbar__actions .theme-toggle,
+    .navbar__actions .navbar__login-btn,
+    .navbar__actions .navbar__user {
         display: none;
     }
 
