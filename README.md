@@ -17,14 +17,36 @@ npm install
 ```
 
 ### Development
+
+The app gets its catalog, accounts and saved data from the
+[Bilge API](../bilge-api). Start the API first (`docker compose up -d` in
+`bilge-api`), then:
+
 ```bash
 npm run dev
 ```
+
+The dev and preview servers forward `/v1` requests to `http://localhost:5080`.
+Set `BILGE_API_URL` to proxy to another API.
 
 ### Build
 ```bash
 npm run build
 ```
+
+The built app calls the API at `/v1` on its own origin, so serve it behind a
+reverse proxy that forwards `/v1` to the API. Alternatively, build with
+`VITE_API_URL=https://api.example.com/v1` and add that origin to the API's
+`Cors__AllowedOrigins`.
+
+### Data and accounts
+
+- API calls live in [`src/api/`](src/api/). `useApi` fetches data, and
+  `client.js` adds the access token and language, refreshing the token when it expires.
+- Signed-in users' saved items, checklists, practice results and language and theme are
+  stored in their account.
+- Guests keep these in `localStorage`. On sign-in they are imported into the
+  account (`POST /me/import`) and cleared from the browser.
 
 ## Features
 

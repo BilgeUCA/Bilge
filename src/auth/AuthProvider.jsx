@@ -1,46 +1,126 @@
-import { useCallback, useMemo } from 'react';
-import { AuthContext, AuthError } from './authContext';
-import { useStoredState } from '../hooks/useStoredState';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AuthContext } from './authContext';
+import { api, fromApiLanguage, getTokens, onTokensChange, setTokens, toApiLanguage } from '../api/client';
+import { clearLocalData, collectLocalData } from '../api/localData';
+import { loadSaved } from '../api/savedStore';
+import { useLanguage } from '../i18n/useLanguage';
+import { useTheme } from '../theme/themeContext';
 
-// Local-only accounts until the Bilge backend exists: accounts live in this
-// browser's localStorage and passwords are kept as a SHA-256 digest, never in
-// plain text. Replace signIn/signUp with API calls when the backend lands.
-const hash = async (text) => {
-    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-    return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
-};
+// Accounts from the local-only version held SHA-256 password digests; drop them
+try {
+    window.localStorage.removeItem('bilge.accounts');
+    window.localStorage.removeItem('bilge.session');
+} catch {
+    // Storage blocked: nothing stored
+}
+
+const post = (path, body) => api(path, { method: 'POST', body, auth: false });
 
 export const AuthProvider = ({ children }) => {
-    const [accounts, setAccounts] = useStoredState('bilge.accounts', {});
-    const [session, setSession] = useStoredState('bilge.session', null);
+    const { language, setLanguage } = useLanguage();
+    const { pinned, setPinned } = useTheme();
+    const [user, setUser] = useState(null);
+    // Until a stored session has been checked, pages should not treat the visitor as a guest
+    const [ready, setReady] = useState(() => !getTokens());
+    const synced = useRef(null); // preferences last known to be on the server
 
-    const signIn = useCallback(
-        async (email, password) => {
-            const key = email.trim().toLowerCase();
-            const account = accounts[key];
-            if (!account) throw new AuthError('noAccount');
-            if (account.passwordHash !== (await hash(password))) throw new AuthError('wrongPassword');
-            setSession({ email: key, name: account.name });
+    // Signing in on a device takes the account's language and theme
+    const adopt = useCallback(
+        (account) => {
+            const { language: lang, theme } = account.preferences;
+            synced.current = { language: lang, theme };
+            const ui = fromApiLanguage(lang);
+            if (ui) setLanguage(ui);
+            setPinned(theme ?? null);
+            setUser(account);
         },
-        [accounts, setSession]
+        [setLanguage, setPinned]
     );
+
+    const restore = useCallback(
+        () =>
+            api('/auth/me')
+                .then(({ user: account }) => adopt(account))
+                // 401: the client already dropped the tokens. Network: stay signed out for now.
+                .catch(() => {})
+                .finally(() => setReady(true)),
+        [adopt]
+    );
+
+    useEffect(() => {
+        if (getTokens()) restore();
+        return onTokensChange((tokens, external) => {
+            if (!tokens) setUser(null);
+            else if (external) restore(); // signed in from another tab
+        });
+    }, [restore]);
+
+    useEffect(() => {
+        loadSaved(user?.id ?? null);
+    }, [user?.id]);
+
+    // Keep the account's preferences in step with the UI
+    useEffect(() => {
+        if (!user) return;
+        const next = { language: toApiLanguage(language), theme: pinned };
+        if (synced.current?.language === next.language && synced.current?.theme === next.theme) return;
+        synced.current = next;
+        api('/me/preferences', { method: 'PATCH', body: next }).catch(() => {
+            synced.current = null;
+        });
+    }, [user, language, pinned]);
+
+    const finish = useCallback(
+        async ({ user: account, tokens }, { isNew = false } = {}) => {
+            setTokens(tokens);
+            try {
+                const { keys, payload } = collectLocalData();
+                if (payload) await api('/me/import', { method: 'POST', body: payload });
+                clearLocalData(keys);
+            } catch {
+                // Keep this browser's data and try again on the next sign-in
+            }
+            if (isNew) {
+                synced.current = null; // a new account takes this device's preferences
+                setUser(account);
+            } else {
+                adopt(account);
+            }
+        },
+        [adopt]
+    );
+
+    const signIn = useCallback(async (email, password) => finish(await post('/auth/login', { email, password })), [finish]);
 
     const signUp = useCallback(
-        async (name, email, password) => {
-            const key = email.trim().toLowerCase();
-            if (accounts[key]) throw new AuthError('exists');
-            const passwordHash = await hash(password);
-            setAccounts((prev) => ({ ...prev, [key]: { name: name.trim(), passwordHash } }));
-            setSession({ email: key, name: name.trim() });
-        },
-        [accounts, setAccounts, setSession]
+        async (name, email, password) => finish(await post('/auth/register', { name, email, password }), { isNew: true }),
+        [finish]
     );
 
-    const signOut = useCallback(() => setSession(null), [setSession]);
+    const signOut = useCallback(async () => {
+        const tokens = getTokens();
+        try {
+            if (tokens) await api('/auth/logout', { method: 'POST', body: { refreshToken: tokens.refreshToken }, signal: AbortSignal.timeout(5000) });
+        } catch {
+            // The session expires on its own; sign out locally regardless
+        } finally {
+            setTokens(null);
+            setUser(null);
+        }
+    }, []);
+
+    const requestReset = useCallback((email) => post('/auth/forgot-password', { email }), []);
+    const completeReset = useCallback(async (token, password) => finish(await post('/auth/reset-password', { token, password })), [finish]);
+
+    const deleteAccount = useCallback(async (password) => {
+        await api('/me', { method: 'DELETE', body: { password } });
+        setTokens(null);
+        setUser(null);
+    }, []);
 
     const value = useMemo(
-        () => ({ user: session, signIn, signUp, signOut }),
-        [session, signIn, signUp, signOut]
+        () => ({ user, ready, signIn, signUp, signOut, requestReset, completeReset, deleteAccount }),
+        [user, ready, signIn, signUp, signOut, requestReset, completeReset, deleteAccount]
     );
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

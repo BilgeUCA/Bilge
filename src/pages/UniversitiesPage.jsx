@@ -5,28 +5,36 @@ import {
 } from 'lucide-react';
 import SectionReveal from '../components/ui/SectionReveal';
 import UniLogo from '../components/ui/UniLogo';
+import LoadState from '../components/ui/LoadState';
 import { useTranslation } from '../i18n/useLanguage';
-import { useSavedIds } from '../hooks/useStoredState';
-import { universities, COUNTRIES, LANGUAGES, TYPES } from '../data/universities';
-import { getAdmissionStatus } from '../utils/admission';
+import { useAuth } from '../auth/authContext';
+import { useApi } from '../api/useApi';
+import { useSavedIds } from '../hooks/usePersonalData';
+import { useDebounced } from '../hooks/useDebounced';
 import { fmt, formatUsd } from '../utils/format';
 import './UniversitiesPage.css';
 
 const SORT_KEYS = ['topRanking', 'lowestTuition', 'highestTuition', 'nameAZ'];
 const ITEMS_PER_PAGE = 6;
+const NUMBER = /^\d+(\.\d+)?$/;
 
 // Filters live in the URL so results are shareable and the back button works
 const readList = (params, key) => (params.get(key) ? params.get(key).split(',') : []);
 
 const UniversitiesPage = () => {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [params, setParams] = useSearchParams();
     const [filtersOpen, setFiltersOpen] = useState(false);
     const saved = useSavedIds('universities');
+    const { data: options } = useApi('/universities/filters');
+    const countries = options?.countries.map((c) => c.value) ?? [];
+    const languages = options?.languages ?? [];
+    const types = options?.types ?? [];
 
     // `?abroad=true` (home page "Study Abroad" link) = every non-Kyrgyz country
     const selectedCountries = params.get('abroad') === 'true'
-        ? COUNTRIES.filter((c) => c !== 'Kyrgyzstan')
+        ? countries.filter((c) => c !== 'Kyrgyzstan')
         : readList(params, 'country');
     const selectedLanguages = readList(params, 'lang');
     const selectedTypes = readList(params, 'type');
@@ -37,6 +45,46 @@ const UniversitiesPage = () => {
     const openOnly = params.get('open') === '1';
     const savedOnly = params.get('saved') === '1';
     const currentPage = Math.max(1, Number(params.get('page')) || 1);
+    const searchTerm = useDebounced(query.trim());
+    const emptyRange = NUMBER.test(minTuition) && NUMBER.test(maxTuition) && Number(minTuition) > Number(maxTuition);
+    // Guests keep saved items in this browser, so "Saved only" filters here instead of on the server
+    const localSaved = savedOnly && !user;
+
+    // The page's URL params are the API's query params
+    const apiPath = useMemo(() => {
+        const q = new URLSearchParams();
+        if (searchTerm) q.set('q', searchTerm);
+        ['country', 'abroad', 'lang', 'type'].forEach((key) => params.get(key) && q.set(key, params.get(key)));
+        if (NUMBER.test(minTuition)) q.set('min', minTuition);
+        if (NUMBER.test(maxTuition)) q.set('max', maxTuition);
+        if (sortKey !== 'topRanking') q.set('sort', sortKey);
+        if (openOnly) q.set('open', '1');
+        if (localSaved) {
+            q.set('pageSize', '50');
+        } else {
+            if (savedOnly) q.set('saved', '1');
+            q.set('page', String(currentPage));
+            q.set('pageSize', String(ITEMS_PER_PAGE));
+        }
+        return `/universities?${q}`;
+    }, [params, searchTerm, minTuition, maxTuition, sortKey, openOnly, savedOnly, localSaved, currentPage]);
+    const results = useApi(emptyRange ? null : apiPath, { keepPrevious: true });
+
+    let items = emptyRange ? [] : results.data?.items ?? [];
+    let totalItems = emptyRange ? 0 : results.data?.pagination.totalItems ?? 0;
+    if (localSaved) {
+        items = items.filter((u) => saved.ids.includes(u.id));
+        totalItems = items.length;
+    }
+    const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+    const page = localSaved ? Math.min(currentPage, totalPages) : currentPage;
+    const pageItems = localSaved ? items.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE) : items;
+    const firstLoad = results.loading && !results.data;
+
+    const toggleSave = async (id) => {
+        await saved.toggle(id);
+        if (savedOnly && user) results.reload();
+    };
 
     const update = (changes, { keepPage = false } = {}) => {
         const next = new URLSearchParams(params);
@@ -55,48 +103,8 @@ const UniversitiesPage = () => {
 
     const toggleIn = (list, value) => (list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
 
-    const withStatus = useMemo(
-        () => universities.map((uni) => ({ ...uni, status: getAdmissionStatus(uni.admissionWindow) })),
-        []
-    );
-
-    const filtered = useMemo(() => {
-        const q = query.trim().toLowerCase();
-        const min = minTuition === '' ? null : Number(minTuition);
-        const max = maxTuition === '' ? null : Number(maxTuition);
-
-        const list = withStatus.filter((uni) => {
-            if (q) {
-                const haystack = [uni.name, uni.shortName, uni.city, uni.country, ...uni.majors].join(' ').toLowerCase();
-                if (!haystack.includes(q)) return false;
-            }
-            if (selectedCountries.length && !selectedCountries.includes(uni.country)) return false;
-            if (selectedLanguages.length && !uni.languages.some((l) => selectedLanguages.includes(l))) return false;
-            if (selectedTypes.length && !selectedTypes.includes(uni.type)) return false;
-            if ((min !== null || max !== null) && uni.tuitionUsd === null) return false;
-            if (min !== null && uni.tuitionUsd < min) return false;
-            if (max !== null && uni.tuitionUsd > max) return false;
-            if (openOnly && uni.status.state !== 'open') return false;
-            if (savedOnly && !saved.ids.includes(uni.id)) return false;
-            return true;
-        });
-
-        // Unknown tuition always sorts last
-        const tuition = (u, fallback) => (u.tuitionUsd === null ? fallback : u.tuitionUsd);
-        const sorters = {
-            topRanking: (a, b) => a.rank - b.rank,
-            lowestTuition: (a, b) => tuition(a, Infinity) - tuition(b, Infinity) || a.rank - b.rank,
-            highestTuition: (a, b) => tuition(b, -Infinity) - tuition(a, -Infinity) || a.rank - b.rank,
-            nameAZ: (a, b) => a.name.localeCompare(b.name),
-        };
-        return [...list].sort(sorters[sortKey]);
-    }, [withStatus, query, selectedCountries, selectedLanguages, selectedTypes, minTuition, maxTuition, openOnly, savedOnly, saved.ids, sortKey]);
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-    const page = Math.min(currentPage, totalPages);
-    const pageItems = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
-
-    const countByCountry = (country) => universities.filter((u) => u.country === country).length;
+    const countByCountry = (country) => options?.countries.find((c) => c.value === country)?.count ?? 0;
+    const catalogSize = options?.countries.reduce((sum, c) => sum + c.count, 0) ?? 0;
 
     const activeFilterCount =
         selectedCountries.length + selectedLanguages.length + selectedTypes.length +
@@ -141,7 +149,7 @@ const UniversitiesPage = () => {
                         <p className="uni-page__subtitle">
                             {fmt(t('universitiesPage.subtitle'), {
                                 kg: countByCountry('Kyrgyzstan'),
-                                abroad: universities.length - countByCountry('Kyrgyzstan'),
+                                abroad: catalogSize - countByCountry('Kyrgyzstan'),
                             })}
                         </p>
                     </SectionReveal>
@@ -195,7 +203,7 @@ const UniversitiesPage = () => {
                         <fieldset className="uni-filters__group">
                             <legend className="uni-filters__label">{t('universitiesPage.country')}</legend>
                             <div className="uni-filters__checkboxes">
-                                {COUNTRIES.map((country) => (
+                                {countries.map((country) => (
                                     <label key={country} className="uni-filters__checkbox">
                                         <input
                                             type="checkbox"
@@ -258,7 +266,7 @@ const UniversitiesPage = () => {
                         <fieldset className="uni-filters__group">
                             <legend className="uni-filters__label">{t('universitiesPage.languageOfInstruction')}</legend>
                             <div className="uni-filters__tags">
-                                {LANGUAGES.map((lang) => (
+                                {languages.map((lang) => (
                                     <button
                                         type="button"
                                         key={lang}
@@ -275,7 +283,7 @@ const UniversitiesPage = () => {
                         <fieldset className="uni-filters__group">
                             <legend className="uni-filters__label">{t('universitiesPage.typeLabel')}</legend>
                             <div className="uni-filters__tags">
-                                {TYPES.map((type) => (
+                                {types.map((type) => (
                                     <button
                                         type="button"
                                         key={type}
@@ -308,8 +316,8 @@ const UniversitiesPage = () => {
                     <div className="uni-page__main" id="uni-results">
                         <div className="uni-page__toolbar">
                             <p className="uni-page__results-count" aria-live="polite">
-                                {t('universitiesPage.showing')} <strong>{filtered.length}</strong> {t('universitiesPage.of')}{' '}
-                                <strong>{universities.length}</strong> {t('universitiesPage.universitiesWord')}
+                                {t('universitiesPage.showing')} <strong>{totalItems}</strong> {t('universitiesPage.of')}{' '}
+                                <strong>{catalogSize}</strong> {t('universitiesPage.universitiesWord')}
                             </p>
                             <label className="uni-page__sort">
                                 <span>{t('universitiesPage.sortBy')}</span>
@@ -348,7 +356,9 @@ const UniversitiesPage = () => {
 
                         <p className="uni-page__disclaimer">{t('universitiesPage.disclaimer')}</p>
 
-                        <div className="uni-page__grid">
+                        {(firstLoad || results.error) && <LoadState error={results.error} onRetry={results.reload} />}
+
+                        <div className="uni-page__grid" aria-busy={results.loading}>
                             {pageItems.map((uni, index) => {
                                 const isSaved = saved.isSaved(uni.id);
                                 return (
@@ -365,7 +375,7 @@ const UniversitiesPage = () => {
                                                 <button
                                                     type="button"
                                                     className={`uni-card__fav ${isSaved ? 'uni-card__fav--active' : ''}`}
-                                                    onClick={() => saved.toggle(uni.id)}
+                                                    onClick={() => toggleSave(uni.id)}
                                                     aria-pressed={isSaved}
                                                     aria-label={`${isSaved ? t('common.unsave') : t('common.save')}: ${uni.name}`}
                                                 >
@@ -430,7 +440,7 @@ const UniversitiesPage = () => {
                             })}
                         </div>
 
-                        {filtered.length === 0 && (
+                        {!results.loading && !results.error && pageItems.length === 0 && (
                             <div className="uni-page__empty">
                                 <p>{savedOnly && saved.ids.length === 0 ? t('universitiesPage.noSaved') : t('universitiesPage.emptyMessage')}</p>
                                 <button type="button" onClick={clearFilters} className="uni-page__empty-btn">
