@@ -1,31 +1,51 @@
+import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { LogOut, Heart, Bookmark, BarChart3 } from 'lucide-react';
+import { LogOut, Heart, Bookmark, BarChart3, Trash2 } from 'lucide-react';
 import UniLogo from '../components/ui/UniLogo';
 import Button from '../components/ui/Button';
+import LoadState from '../components/ui/LoadState';
 import { useTranslation } from '../i18n/useLanguage';
 import { useAuth } from '../auth/authContext';
-import { useSavedIds, useStoredState } from '../hooks/useStoredState';
-import { getUniversity } from '../data/universities';
-import { getScholarship } from '../data/scholarships';
-import { ORT_RESULTS_KEY } from '../data/ortPractice';
+import { authErrorMessage } from '../auth/errors';
+import { useApi } from '../api/useApi';
 import { fmt } from '../utils/format';
 import './AccountPage.css';
 
 const AccountPage = () => {
     const { t } = useTranslation();
-    const { user, signOut } = useAuth();
+    const { user, ready, signOut, deleteAccount } = useAuth();
     const navigate = useNavigate();
-    const savedUnis = useSavedIds('universities').ids.map(getUniversity).filter(Boolean);
-    const savedSchs = useSavedIds('scholarships').ids.map(getScholarship).filter(Boolean);
-    const [results] = useStoredState(ORT_RESULTS_KEY, []);
+    const saved = useApi(user ? '/me/saved' : null);
+    const ort = useApi(user ? '/me/ort/attempts?limit=1' : null);
+    const [deleteError, setDeleteError] = useState('');
+    const [deleting, setDeleting] = useState(false);
 
+    if (!ready) return <LoadState className="load-state--page" />;
     if (!user) return <Navigate to="/login" replace state={{ from: '/account' }} />;
 
-    const best = results.length ? Math.max(...results.map((r) => Math.round((r.correct / r.total) * 100))) : null;
+    const savedUnis = saved.data?.universities ?? [];
+    const savedSchs = saved.data?.scholarships ?? [];
+    const best = ort.data?.stats.bestPercent ?? null;
 
-    const handleSignOut = () => {
-        signOut();
+    const handleSignOut = async () => {
+        await signOut();
         navigate('/');
+    };
+
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        const password = e.currentTarget.elements.password.value;
+        if (!password) return setDeleteError(t('auth.errors.passwordRequired'));
+        setDeleting(true);
+        setDeleteError('');
+        try {
+            await deleteAccount(password);
+            navigate('/', { replace: true });
+        } catch (err) {
+            setDeleteError(authErrorMessage(t, err));
+            setDeleting(false);
+        }
+        return undefined;
     };
 
     return (
@@ -41,6 +61,11 @@ const AccountPage = () => {
                     </button>
                 </header>
 
+                {saved.error || ort.error ? (
+                    <LoadState error={saved.error || ort.error} onRetry={() => { saved.reload(); ort.reload(); }} />
+                ) : !saved.data || !ort.data ? (
+                    <LoadState />
+                ) : (
                 <div className="account-page__grid">
                     <section className="account-card">
                         <h2 className="account-card__title"><Heart size={18} aria-hidden="true" /> {t('account.savedUnis')}</h2>
@@ -88,7 +113,7 @@ const AccountPage = () => {
                             <p className="account-card__empty">{t('ort.progressEmpty')}</p>
                         ) : (
                             <p className="account-card__stat">
-                                <strong>{best}%</strong> {fmt(t('account.ortBest'), { n: results.length })}
+                                <strong>{best}%</strong> {fmt(t('account.ortBest'), { n: ort.data.stats.count })}
                             </p>
                         )}
                         <Button variant="secondary" size="sm" to={best === null ? '/ort-prep?tab=practice' : '/ort-prep?tab=progress'}>
@@ -96,6 +121,22 @@ const AccountPage = () => {
                         </Button>
                     </section>
                 </div>
+                )}
+
+                <section className="account-card account-card--danger">
+                    <h2 className="account-card__title"><Trash2 size={18} aria-hidden="true" /> {t('account.deleteTitle')}</h2>
+                    <p className="account-card__empty">{t('account.deleteText')}</p>
+                    <form className="account-delete" onSubmit={handleDelete} noValidate>
+                        <label className="account-delete__field">
+                            <span>{t('auth.password')}</span>
+                            <input name="password" type="password" autoComplete="current-password" required />
+                        </label>
+                        <button type="submit" className="account-page__signout" disabled={deleting}>
+                            {t('account.deleteButton')}
+                        </button>
+                    </form>
+                    {deleteError && <p className="form-error account-delete__error" role="alert">{deleteError}</p>}
+                </section>
                 <p className="account-page__note">{t('auth.localNote')}</p>
             </div>
         </div>

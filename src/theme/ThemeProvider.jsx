@@ -48,6 +48,7 @@ export const ThemeProvider = ({ children }) => {
         setPinned(next === system ? null : next);
     }, [theme, systemDark]);
 
-    const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme]);
+    // pinned ('light' | 'dark' | null = follow the system) syncs to the signed-in account
+    const value = useMemo(() => ({ theme, toggleTheme, pinned, setPinned }), [theme, toggleTheme, pinned]);
     return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };

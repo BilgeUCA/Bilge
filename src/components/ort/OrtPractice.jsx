@@ -1,45 +1,66 @@
 import { useState } from 'react';
 import { CheckCircle2, XCircle, RotateCcw, ArrowRight } from 'lucide-react';
-import { ortQuestions, ORT_RESULTS_KEY } from '../../data/ortPractice';
+import LoadState from '../ui/LoadState';
+import { api } from '../../api/client';
+import { useApi } from '../../api/useApi';
+import { ORT_RESULTS_KEY } from '../../api/localData';
+import { useAuth } from '../../auth/authContext';
 import { useStoredState } from '../../hooks/useStoredState';
 import { useTranslation } from '../../i18n/useLanguage';
 import { fmt } from '../../utils/format';
 import './OrtPractice.css';
 
-// One question at a time; the result screen reviews every answer and the
-// score is saved to localStorage for the Progress tab and the account page.
+const SUBJECTS = ['all', 'math', 'verbal'];
+const FEEDBACK = { high: 'feedbackHigh', mid: 'feedbackMid', low: 'feedbackLow' };
+
+// One question at a time. The server grades the attempt and only then reveals
+// the answers; it keeps results for signed-in users, guests keep them here.
 const OrtPractice = ({ initialSubject = 'all', onFinished }) => {
-    const { t } = useTranslation();
-    const [subject, setSubject] = useState(initialSubject);
+    const { t, language } = useTranslation();
+    const { user } = useAuth();
+    const { data, error, reload } = useApi('/ort/questions');
+    const [subject, setSubject] = useState(SUBJECTS.includes(initialSubject) ? initialSubject : 'all');
     const [started, setStarted] = useState(false);
     const [index, setIndex] = useState(0);
     const [answers, setAnswers] = useState({});
-    const [finished, setFinished] = useState(false);
+    const [result, setResult] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
     const [, setResults] = useStoredState(ORT_RESULTS_KEY, []);
 
-    const questions = ortQuestions.filter((q) => subject === 'all' || q.subject === subject);
+    if (!data) return <LoadState error={error} onRetry={reload} />;
+
+    const questions = data.items.filter((q) => subject === 'all' || q.subject === subject);
     const current = questions[index];
-    const correctCount = questions.filter((q) => answers[q.id] === q.answer).length;
 
     const start = () => {
         setAnswers({});
         setIndex(0);
-        setFinished(false);
+        setResult(null);
+        setSubmitError(null);
         setStarted(true);
     };
 
-    const next = () => {
+    const next = async () => {
         if (index < questions.length - 1) {
             setIndex(index + 1);
             return;
         }
-        const correct = questions.filter((q) => answers[q.id] === q.answer).length;
-        setResults((prev) => [
-            ...prev,
-            { date: new Date().toISOString(), subject, correct, total: questions.length },
-        ].slice(-20));
-        setFinished(true);
-        onFinished?.();
+        setSubmitting(true);
+        setSubmitError(null);
+        try {
+            const graded = await api('/ort/attempts', { method: 'POST', body: { subject, answers }, language });
+            if (!user) {
+                const { date, correct, total } = graded.attempt;
+                setResults((prev) => [...(Array.isArray(prev) ? prev : []), { date, subject, correct, total }].slice(-20));
+            }
+            setResult(graded);
+            onFinished?.();
+        } catch (err) {
+            setSubmitError(err);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (!started) {
@@ -49,47 +70,44 @@ const OrtPractice = ({ initialSubject = 'all', onFinished }) => {
                 <p className="ort-practice__text">{t('ortPractice.intro')}</p>
                 <fieldset className="ort-practice__subjects">
                     <legend className="sr-only">{t('ortPractice.chooseSubject')}</legend>
-                    {['all', 'math', 'verbal'].map((s) => (
+                    {SUBJECTS.map((s) => (
                         <label key={s} className={`ort-practice__subject ${subject === s ? 'ort-practice__subject--active' : ''}`}>
                             <input type="radio" name="ort-subject" value={s} checked={subject === s} onChange={() => setSubject(s)} />
                             {t(`ortPractice.subjects.${s}`)}
-                            <small>{fmt(t('ortPractice.questionsCount'), { n: ortQuestions.filter((q) => s === 'all' || q.subject === s).length })}</small>
+                            <small>{fmt(t('ortPractice.questionsCount'), { n: data.counts[s] ?? 0 })}</small>
                         </label>
                     ))}
                 </fieldset>
-                <button type="button" className="btn btn--primary btn--md" onClick={start}>
+                <button type="button" className="btn btn--primary btn--md" onClick={start} disabled={questions.length === 0}>
                     {t('ortPractice.start')} <ArrowRight size={16} aria-hidden="true" />
                 </button>
             </div>
         );
     }
 
-    if (finished) {
-        const pct = Math.round((correctCount / questions.length) * 100);
+    if (result) {
+        const { correct, total, percent } = result.attempt;
         return (
             <div className="ort-practice">
                 <div className="ort-practice__score">
-                    <span className="ort-practice__score-value">{pct}%</span>
-                    <span>{fmt(t('ortPractice.scoreText'), { correct: correctCount, total: questions.length })}</span>
-                    <p>{pct >= 80 ? t('ortPractice.feedbackHigh') : pct >= 50 ? t('ortPractice.feedbackMid') : t('ortPractice.feedbackLow')}</p>
+                    <span className="ort-practice__score-value">{percent}%</span>
+                    <span>{fmt(t('ortPractice.scoreText'), { correct, total })}</span>
+                    <p>{t(`ortPractice.${FEEDBACK[result.feedback] || 'feedbackLow'}`)}</p>
                 </div>
                 <ol className="ort-practice__review">
-                    {questions.map((q) => {
-                        const ok = answers[q.id] === q.answer;
-                        return (
-                            <li key={q.id} className={`ort-practice__review-item ${ok ? 'is-correct' : 'is-wrong'}`}>
-                                {ok ? <CheckCircle2 size={18} aria-label={t('ortPractice.correct')} /> : <XCircle size={18} aria-label={t('ortPractice.wrong')} />}
-                                <div>
-                                    <p className="ort-practice__review-q">{q.prompt}</p>
-                                    <p className="ort-practice__review-a">
-                                        {t('ortPractice.answer')}: <strong>{q.options[q.answer]}</strong>
-                                        {!ok && answers[q.id] !== undefined && <> · {t('ortPractice.yours')}: {q.options[answers[q.id]]}</>}
-                                    </p>
-                                    <p className="ort-practice__review-exp">{q.explanation}</p>
-                                </div>
-                            </li>
-                        );
-                    })}
+                    {result.review.map((q) => (
+                        <li key={q.id} className={`ort-practice__review-item ${q.isCorrect ? 'is-correct' : 'is-wrong'}`}>
+                            {q.isCorrect ? <CheckCircle2 size={18} aria-label={t('ortPractice.correct')} /> : <XCircle size={18} aria-label={t('ortPractice.wrong')} />}
+                            <div>
+                                <p className="ort-practice__review-q">{q.prompt}</p>
+                                <p className="ort-practice__review-a">
+                                    {t('ortPractice.answer')}: <strong>{q.options[q.answer]}</strong>
+                                    {!q.isCorrect && <> · {t('ortPractice.yours')}: {q.options[q.chosen]}</>}
+                                </p>
+                                <p className="ort-practice__review-exp">{q.explanation}</p>
+                            </div>
+                        </li>
+                    ))}
                 </ol>
                 <button type="button" className="btn btn--secondary btn--md" onClick={() => setStarted(false)}>
                     <RotateCcw size={16} aria-hidden="true" /> {t('ortPractice.again')}
@@ -124,11 +142,16 @@ const OrtPractice = ({ initialSubject = 'all', onFinished }) => {
                     ))}
                 </div>
             </fieldset>
+            {submitError && (
+                <p className="form-error" role="alert">
+                    {t(submitError.code === 'network' ? 'common.offline' : 'auth.errors.generic')}
+                </p>
+            )}
             <div className="ort-practice__nav">
-                <button type="button" className="btn btn--ghost btn--md" disabled={index === 0} onClick={() => setIndex(index - 1)}>
+                <button type="button" className="btn btn--ghost btn--md" disabled={index === 0 || submitting} onClick={() => setIndex(index - 1)}>
                     {t('ortPractice.back')}
                 </button>
-                <button type="button" className="btn btn--primary btn--md" disabled={chosen === undefined} onClick={next}>
+                <button type="button" className="btn btn--primary btn--md" disabled={chosen === undefined || submitting} onClick={next}>
                     {index === questions.length - 1 ? t('ortPractice.finish') : t('ortPractice.next')}
                 </button>
             </div>

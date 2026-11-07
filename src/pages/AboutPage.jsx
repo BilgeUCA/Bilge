@@ -2,8 +2,7 @@ import { Users, Target, Heart, Mail } from 'lucide-react';
 import Button from '../components/ui/Button';
 import SectionReveal from '../components/ui/SectionReveal';
 import { useTranslation } from '../i18n/useLanguage';
-import { universities } from '../data/universities';
-import { scholarships } from '../data/scholarships';
+import { useApi } from '../api/useApi';
 import { SUPPORTED_LANGUAGES } from '../i18n/translations';
 import './AboutPage.css';
 
@@ -13,12 +12,6 @@ const values = [
     { icon: Heart, titleKey: 'empowermentTitle', descKey: 'empowermentDesc' },
 ];
 
-// Real counts from the site's own data
-const stats = [
-    { value: universities.length, labelKey: 'universities' },
-    { value: scholarships.length, labelKey: 'scholarships' },
-    { value: SUPPORTED_LANGUAGES.length, labelKey: 'languages' },
-];
 
 const team = [
     { name: 'Kairat Kubatov', initials: 'KK' },
@@ -29,6 +22,14 @@ const team = [
 
 const AboutPage = () => {
     const { t } = useTranslation();
+    // Real counts from the catalog
+    const { data: filters } = useApi('/universities/filters');
+    const { data: scholarships } = useApi('/scholarships');
+    const stats = [
+        { value: filters ? filters.countries.reduce((sum, c) => sum + c.count, 0) : '…', labelKey: 'universities' },
+        { value: scholarships?.total ?? '…', labelKey: 'scholarships' },
+        { value: SUPPORTED_LANGUAGES.length, labelKey: 'languages' },
+    ];
 
     return (
         <div className="about-page">
