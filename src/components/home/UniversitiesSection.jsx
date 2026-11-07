@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
-import { getUniversity } from '../../data/universities';
+import { useApi } from '../../api/useApi';
 import SectionReveal from '../ui/SectionReveal';
 import UniLogo from '../ui/UniLogo';
 import { useTranslation } from '../../i18n/useLanguage';
@@ -10,7 +10,8 @@ const FEATURED = ['auca', 'manas', 'ala-too'];
 
 const UniversitiesSection = () => {
     const { t } = useTranslation();
-    const featured = FEATURED.map(getUniversity);
+    const { data } = useApi('/universities?pageSize=50');
+    const featured = FEATURED.map((id) => data?.items.find((u) => u.id === id)).filter(Boolean);
 
     return (
         <section className="universities section" id="universities-section">

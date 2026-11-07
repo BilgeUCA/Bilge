@@ -6,29 +6,20 @@ import {
 import SectionReveal from '../components/ui/SectionReveal';
 import UniLogo from '../components/ui/UniLogo';
 import { useTranslation } from '../i18n/useLanguage';
-import { useSavedIds, useStoredState } from '../hooks/useStoredState';
-import { getScholarship, scholarships } from '../data/scholarships';
-import { getUniversity } from '../data/universities';
-import { getAdmissionStatus, formatMonthDay } from '../utils/admission';
+import LoadState from '../components/ui/LoadState';
+import { useAuth } from '../auth/authContext';
+import { useApi } from '../api/useApi';
+import { useChecklist, useSavedIds } from '../hooks/usePersonalData';
+import { formatMonthDay } from '../utils/admission';
 import { fmt } from '../utils/format';
 import './UniversityDetailPage.css';
 import './ScholarshipDetailPage.css';
 
 const ScholarshipDetail = ({ id }) => {
     const { t } = useTranslation();
-    const sch = getScholarship(id);
-    const saved = useSavedIds('scholarships');
-    const [checked, setChecked] = useStoredState(`bilge.checklist.sch.${id}`, []);
-    const [openFaq, setOpenFaq] = useState(0);
+    const { data, error, reload } = useApi(`/scholarships/${encodeURIComponent(id)}`, { keepPrevious: true });
 
-    useEffect(() => {
-        if (sch) document.title = `${sch.name} — BILGE`;
-        return () => {
-            document.title = 'BILGE — Higher Education in Kyrgyzstan';
-        };
-    }, [sch]);
-
-    if (!sch) {
+    if (error?.status === 404) {
         return (
             <div className="unidet-page">
                 <div className="container unidet-notfound">
@@ -40,13 +31,31 @@ const ScholarshipDetail = ({ id }) => {
             </div>
         );
     }
+    if (!data) return <LoadState className="load-state--page" error={error} onRetry={reload} />;
+    return <ScholarshipView sch={data} />;
+};
 
-    const status = getAdmissionStatus(sch.window);
+const ScholarshipView = ({ sch }) => {
+    const { t } = useTranslation();
+    const { user } = useAuth();
+    const saved = useSavedIds('scholarships');
+    const checklist = useChecklist('scholarships', sch.id, sch.checklist?.checked);
+    const { checked } = checklist;
+    const [openFaq, setOpenFaq] = useState(0);
+    const { data: all } = useApi('/scholarships');
+
+    useEffect(() => {
+        document.title = `${sch.name} — BILGE`;
+        return () => {
+            document.title = 'BILGE — Higher Education in Kyrgyzstan';
+        };
+    }, [sch.name]);
+
+    const { status } = sch;
     const isSaved = saved.isSaved(sch.id);
-    const relatedUnis = sch.universities.map(getUniversity).filter(Boolean);
-    const others = scholarships.filter((s) => s.id !== sch.id).slice(0, 3);
-    const toggleDoc = (doc) =>
-        setChecked((prev) => (prev.includes(doc) ? prev.filter((d) => d !== doc) : [...prev, doc]));
+    const relatedUnis = sch.universities; // partner universities, expanded by the API
+    const others = (all?.items ?? []).filter((s) => s.id !== sch.id).slice(0, 3);
+    const toggleDoc = checklist.toggle;
 
     return (
         <div className="unidet-page">
@@ -132,7 +141,7 @@ const ScholarshipDetail = ({ id }) => {
                                     {fmt(t('uniDetail.docsProgress'), { done: checked.filter((d) => sch.documents.includes(d)).length, total: sch.documents.length })}
                                 </span>
                             </div>
-                            <p className="unidet-section__hint">{t('uniDetail.docsHint')}</p>
+                            <p className="unidet-section__hint">{t(user ? 'uniDetail.docsHintAccount' : 'uniDetail.docsHint')}</p>
                             <ul className="unidet-checklist">
                                 {sch.documents.map((doc) => (
                                     <li key={doc}>

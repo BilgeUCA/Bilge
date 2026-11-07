@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import translations, { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from './translations';
 import { LanguageContext } from './context';
+import { setApiLanguage } from '../api/client';
 
 const STORAGE_KEY = 'bilge.lang';
 
@@ -30,6 +31,7 @@ export const LanguageProvider = ({ children }) => {
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
+        setApiLanguage(language);
         window.localStorage.setItem(STORAGE_KEY, language);
         document.documentElement.setAttribute(
             'lang',
