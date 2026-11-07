@@ -58,6 +58,8 @@ const ScholarshipsPage = () => {
     if (savedOnly && user) apiQuery.set('saved', '1');
     const search = apiQuery.toString();
     const results = useApi(search ? `/scholarships?${search}` : '/scholarships', { keepPrevious: true });
+    // A value the API doesn't know (an old or edited link) matches nothing; it isn't a load failure
+    const loadError = results.error?.code === 'validation' ? null : results.error;
     const filtered = (results.data?.items ?? []).filter((s) => !savedOnly || user || saved.ids.includes(s.id));
 
     const toggleSave = async (id) => {
@@ -156,7 +158,7 @@ const ScholarshipsPage = () => {
                         )}
                     </p>
                     {results.loading && !results.data && <LoadState />}
-                    {results.error && <LoadState error={results.error} onRetry={results.reload} />}
+                    {loadError && <LoadState error={loadError} onRetry={results.reload} />}
                     <div className="sch-page__grid" aria-busy={results.loading}>
                         {filtered.map((sch, index) => {
                             const { status } = sch;
@@ -225,7 +227,7 @@ const ScholarshipsPage = () => {
                         })}
                     </div>
 
-                    {!results.loading && !results.error && filtered.length === 0 && (
+                    {!results.loading && !loadError && filtered.length === 0 && (
                         <div className="sch-page__empty">
                             <p>{t('scholarships.emptyMessage')}</p>
                             <button type="button" className="uni-page__empty-btn" onClick={() => setParams({}, { replace: true })}>

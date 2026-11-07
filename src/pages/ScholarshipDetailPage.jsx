@@ -17,7 +17,7 @@ import './ScholarshipDetailPage.css';
 
 const ScholarshipDetail = ({ id }) => {
     const { t } = useTranslation();
-    const { data, error, reload } = useApi(`/scholarships/${encodeURIComponent(id)}`, { keepPrevious: true });
+    const { data, error, loading, reload } = useApi(`/scholarships/${encodeURIComponent(id)}`, { keepPrevious: true });
 
     if (error?.status === 404) {
         return (
@@ -32,14 +32,14 @@ const ScholarshipDetail = ({ id }) => {
         );
     }
     if (!data) return <LoadState className="load-state--page" error={error} onRetry={reload} />;
-    return <ScholarshipView sch={data} />;
+    return <ScholarshipView sch={data} stale={loading} />;
 };
 
-const ScholarshipView = ({ sch }) => {
+const ScholarshipView = ({ sch, stale }) => {
     const { t } = useTranslation();
     const { user } = useAuth();
     const saved = useSavedIds('scholarships');
-    const checklist = useChecklist('scholarships', sch.id, sch.checklist?.checked);
+    const checklist = useChecklist('scholarships', sch.id, sch.documents, sch.checklist?.checked, stale);
     const { checked } = checklist;
     const [openFaq, setOpenFaq] = useState(0);
     const { data: all } = useApi('/scholarships');
@@ -146,7 +146,7 @@ const ScholarshipView = ({ sch }) => {
                                 {sch.documents.map((doc) => (
                                     <li key={doc}>
                                         <label className="unidet-checklist__item">
-                                            <input type="checkbox" checked={checked.includes(doc)} onChange={() => toggleDoc(doc)} />
+                                            <input type="checkbox" checked={checked.includes(doc)} disabled={!checklist.editable} onChange={() => toggleDoc(doc)} />
                                             <span>{doc}</span>
                                         </label>
                                     </li>

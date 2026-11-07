@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import {
     Search, MapPin, Heart, DollarSign, BookOpen, ChevronLeft, ChevronRight, SlidersHorizontal, Trophy, X,
 } from 'lucide-react';
@@ -44,7 +44,7 @@ const UniversitiesPage = () => {
     const sortKey = SORT_KEYS.includes(params.get('sort')) ? params.get('sort') : 'topRanking';
     const openOnly = params.get('open') === '1';
     const savedOnly = params.get('saved') === '1';
-    const currentPage = Math.max(1, Number(params.get('page')) || 1);
+    const currentPage = Math.max(1, Math.floor(Number(params.get('page'))) || 1);
     const searchTerm = useDebounced(query.trim());
     const emptyRange = NUMBER.test(minTuition) && NUMBER.test(maxTuition) && Number(minTuition) > Number(maxTuition);
     // Guests keep saved items in this browser, so "Saved only" filters here instead of on the server
@@ -54,7 +54,8 @@ const UniversitiesPage = () => {
     const apiPath = useMemo(() => {
         const q = new URLSearchParams();
         if (searchTerm) q.set('q', searchTerm);
-        ['country', 'abroad', 'lang', 'type'].forEach((key) => params.get(key) && q.set(key, params.get(key)));
+        ['country', 'lang', 'type'].forEach((key) => params.get(key) && q.set(key, params.get(key)));
+        if (params.get('abroad') === 'true') q.set('abroad', 'true');
         if (NUMBER.test(minTuition)) q.set('min', minTuition);
         if (NUMBER.test(maxTuition)) q.set('max', maxTuition);
         if (sortKey !== 'topRanking') q.set('sort', sortKey);
@@ -70,6 +71,8 @@ const UniversitiesPage = () => {
     }, [params, searchTerm, minTuition, maxTuition, sortKey, openOnly, savedOnly, localSaved, currentPage]);
     const results = useApi(emptyRange ? null : apiPath, { keepPrevious: true });
 
+    // A value the API doesn't know (an old or edited link) matches nothing; it isn't a load failure
+    const loadError = results.error?.code === 'validation' ? null : results.error;
     let items = emptyRange ? [] : results.data?.items ?? [];
     let totalItems = emptyRange ? 0 : results.data?.pagination.totalItems ?? 0;
     if (localSaved) {
@@ -139,6 +142,14 @@ const UniversitiesPage = () => {
         status.state === 'open'
             ? fmt(t('universitiesPage.statusOpen'), { n: status.daysLeft })
             : fmt(t('universitiesPage.statusOpens'), { date: status.opensOn });
+
+    // A page past the end (an old link, or its last saved item was removed): show the last page
+    if (!results.loading && !localSaved && totalItems > 0 && currentPage > totalPages) {
+        const last = new URLSearchParams(params);
+        if (totalPages === 1) last.delete('page');
+        else last.set('page', String(totalPages));
+        return <Navigate to={{ search: `?${last}` }} replace />;
+    }
 
     return (
         <div className="uni-page">
@@ -356,7 +367,7 @@ const UniversitiesPage = () => {
 
                         <p className="uni-page__disclaimer">{t('universitiesPage.disclaimer')}</p>
 
-                        {(firstLoad || results.error) && <LoadState error={results.error} onRetry={results.reload} />}
+                        {(firstLoad || loadError) && <LoadState error={loadError} onRetry={results.reload} />}
 
                         <div className="uni-page__grid" aria-busy={results.loading}>
                             {pageItems.map((uni, index) => {
@@ -440,7 +451,7 @@ const UniversitiesPage = () => {
                             })}
                         </div>
 
-                        {!results.loading && !results.error && pageItems.length === 0 && (
+                        {!results.loading && !loadError && pageItems.length === 0 && (
                             <div className="uni-page__empty">
                                 <p>{savedOnly && saved.ids.length === 0 ? t('universitiesPage.noSaved') : t('universitiesPage.emptyMessage')}</p>
                                 <button type="button" onClick={clearFilters} className="uni-page__empty-btn">

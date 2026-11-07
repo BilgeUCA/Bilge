@@ -28,17 +28,22 @@ export const useSavedIds = (kind) => {
     return { ids, isSaved: (id) => ids.includes(id), toggle };
 };
 
-// Document checklist for one university or scholarship. `serverChecked` is
-// the `checklist.checked` list embedded in the detail response.
-export const useChecklist = (kind, id, serverChecked) => {
+// Document checklist for one university or scholarship. `serverChecked` is the
+// `checklist.checked` list of the detail response; `stale` means that response may
+// be outdated (cached, or from before sign-in) and a fresh one is loading.
+export const useChecklist = (kind, id, documents, serverChecked, stale) => {
     const { user } = useAuth();
     const [local, setLocal] = useStoredState(checklistKey(kind, id), []);
     const [remote, setRemote] = useState(null);
     const queue = useRef(Promise.resolve());
     const checked = user ? remote ?? serverChecked ?? [] : asList(local);
+    // The server replaces the whole list, so wait for fresh data before the first change
+    const editable = !user || remote !== null || !stale;
 
     const toggle = (doc) => {
-        const next = checked.includes(doc) ? checked.filter((d) => d !== doc) : [...checked, doc];
+        if (!editable) return;
+        // Ticks for documents no longer listed would be rejected by the server
+        const next = (checked.includes(doc) ? checked.filter((d) => d !== doc) : [...checked, doc]).filter((d) => documents.includes(d));
         if (!user) {
             setLocal(next);
             return;
@@ -49,5 +54,5 @@ export const useChecklist = (kind, id, serverChecked) => {
             .then(() => api(`/me/checklists/${kind}/${encodeURIComponent(id)}`, { method: 'PUT', body: { checked: next } }))
             .catch(() => setRemote((current) => (current === next ? checked : current)));
     };
-    return { checked, toggle };
+    return { checked, toggle, editable };
 };

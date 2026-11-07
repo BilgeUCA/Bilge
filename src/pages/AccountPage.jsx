@@ -6,6 +6,7 @@ import Button from '../components/ui/Button';
 import LoadState from '../components/ui/LoadState';
 import { useTranslation } from '../i18n/useLanguage';
 import { useAuth } from '../auth/authContext';
+import { authErrorMessage } from '../auth/errors';
 import { useApi } from '../api/useApi';
 import { fmt } from '../utils/format';
 import './AccountPage.css';
@@ -41,7 +42,7 @@ const AccountPage = () => {
             await deleteAccount(password);
             navigate('/', { replace: true });
         } catch (err) {
-            setDeleteError(t(`auth.errors.${err.code}`, t('auth.errors.generic')));
+            setDeleteError(authErrorMessage(t, err));
             setDeleting(false);
         }
         return undefined;
@@ -60,7 +61,11 @@ const AccountPage = () => {
                     </button>
                 </header>
 
-                {(saved.error || ort.error) && <LoadState error={saved.error || ort.error} onRetry={() => { saved.reload(); ort.reload(); }} />}
+                {saved.error || ort.error ? (
+                    <LoadState error={saved.error || ort.error} onRetry={() => { saved.reload(); ort.reload(); }} />
+                ) : !saved.data || !ort.data ? (
+                    <LoadState />
+                ) : (
                 <div className="account-page__grid">
                     <section className="account-card">
                         <h2 className="account-card__title"><Heart size={18} aria-hidden="true" /> {t('account.savedUnis')}</h2>
@@ -116,6 +121,7 @@ const AccountPage = () => {
                         </Button>
                     </section>
                 </div>
+                )}
 
                 <section className="account-card account-card--danger">
                     <h2 className="account-card__title"><Trash2 size={18} aria-hidden="true" /> {t('account.deleteTitle')}</h2>

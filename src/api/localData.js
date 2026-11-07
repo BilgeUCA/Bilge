@@ -43,7 +43,8 @@ export const collectLocalData = () => {
     }
     const ortResults = (Array.isArray(read(ORT_RESULTS_KEY)) ? read(ORT_RESULTS_KEY) : [])
         .filter((r) => r && typeof r.date === 'string' && !Number.isNaN(Date.parse(r.date)) && SUBJECTS.includes(r.subject)
-            && Number.isInteger(r.correct) && Number.isInteger(r.total) && r.total >= 1 && r.total <= 100 && r.correct >= 0 && r.correct <= r.total)
+            && Number.isInteger(r.correct) && Number.isInteger(r.total) && r.total >= 1 && r.total <= 100 && r.correct >= 0 && r.correct <= r.total
+            && Date.parse(r.date) <= Date.now() + 86_400_000)
         .slice(-500);
     if (window.localStorage.getItem(ORT_RESULTS_KEY) !== null) keys.push(ORT_RESULTS_KEY);
 

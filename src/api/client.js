@@ -50,11 +50,13 @@ export const onTokensChange = (fn) => {
     return () => listeners.delete(fn);
 };
 
-// Another tab signed in, signed out or refreshed the tokens
+// Another tab changed the tokens. Only signing in or out there needs a reaction
+// here; its routine refreshes just replace the tokens this tab uses.
 window.addEventListener('storage', (e) => {
     if (e.key !== TOKENS_KEY && e.key !== null) return;
+    const wasSignedIn = Boolean(tokens);
     tokens = readTokens();
-    notify(true);
+    notify(wasSignedIn !== Boolean(tokens));
 });
 
 const send = async (path, { method = 'GET', body, signal, language }, accessToken) => {
@@ -69,11 +71,13 @@ const send = async (path, { method = 'GET', body, signal, language }, accessToke
         throw new ApiError(0, 'network', 'The BILGE server could not be reached.');
     }
     if (response.status === 204) return null;
-    const data = await response.json().catch(() => null);
+    const data = await response.json().catch(() => undefined);
     if (!response.ok) {
         const error = data?.error;
         throw new ApiError(response.status, error?.code || 'generic', error?.message || response.statusText, error?.field || null);
     }
+    // e.g. index.html from a static host when VITE_API_URL was not set at build time
+    if (data === undefined) throw new ApiError(response.status, 'generic', 'The server sent a response that is not JSON.');
     return data;
 };
 
@@ -83,7 +87,8 @@ let refreshing = null;
 const withLock = (fn) => (navigator.locks?.request ? navigator.locks.request('bilge-auth-refresh', fn) : fn());
 const refresh = (failedAccessToken) => {
     refreshing ??= withLock(async () => {
-        const stored = readTokens();
+        // Storage may be blocked (private mode): fall back to the tokens held in memory
+        const stored = readTokens() ?? tokens;
         if (stored && stored.accessToken !== failedAccessToken) {
             tokens = stored;
             return stored;

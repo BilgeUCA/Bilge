@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
     // Until a stored session has been checked, pages should not treat the visitor as a guest
     const [ready, setReady] = useState(() => !getTokens());
     const synced = useRef(null); // preferences last known to be on the server
+    const generation = useRef(0); // bumped by every sign-in and sign-out, so an older restore can't apply
 
     // Signing in on a device takes the account's language and theme
     const adopt = useCallback(
@@ -37,15 +38,21 @@ export const AuthProvider = ({ children }) => {
         [setLanguage, setPinned]
     );
 
-    const restore = useCallback(
-        () =>
+    const restore = useCallback(() => {
+        const started = generation.current;
+        const attempt = (n) =>
             api('/auth/me')
-                .then(({ user: account }) => adopt(account))
-                // 401: the client already dropped the tokens. Network: stay signed out for now.
-                .catch(() => {})
-                .finally(() => setReady(true)),
-        [adopt]
-    );
+                .then(({ user: account }) => {
+                    if (generation.current === started) adopt(account);
+                })
+                .catch((err) => {
+                    // 401: the client already dropped the tokens. Otherwise the API may be
+                    // starting or redeploying: retry before showing the visitor as a guest.
+                    if (err.status === 401 || n >= 3 || generation.current !== started) return undefined;
+                    return new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** n)).then(() => attempt(n + 1));
+                });
+        return attempt(0).finally(() => setReady(true));
+    }, [adopt]);
 
     useEffect(() => {
         if (getTokens()) restore();
@@ -72,6 +79,7 @@ export const AuthProvider = ({ children }) => {
 
     const finish = useCallback(
         async ({ user: account, tokens }, { isNew = false } = {}) => {
+            generation.current += 1;
             setTokens(tokens);
             try {
                 const { keys, payload } = collectLocalData();
@@ -98,6 +106,7 @@ export const AuthProvider = ({ children }) => {
     );
 
     const signOut = useCallback(async () => {
+        generation.current += 1;
         const tokens = getTokens();
         try {
             if (tokens) await api('/auth/logout', { method: 'POST', body: { refreshToken: tokens.refreshToken }, signal: AbortSignal.timeout(5000) });
@@ -114,6 +123,7 @@ export const AuthProvider = ({ children }) => {
 
     const deleteAccount = useCallback(async (password) => {
         await api('/me', { method: 'DELETE', body: { password } });
+        generation.current += 1;
         setTokens(null);
         setUser(null);
     }, []);
