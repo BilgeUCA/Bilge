@@ -61,7 +61,7 @@ const ContactPage = () => {
                         </div>
                     </div>
                 ) : (
-                    <form className="info-form" onSubmit={handleSubmit} noValidate>
+                    <form key={user?.id ?? 'guest'} className="info-form" onSubmit={handleSubmit} noValidate>
                         <div className="info-form__row">
                             <label className="info-form__field">
                                 <span>{t('contact.name')}</span>
