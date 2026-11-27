@@ -28,16 +28,15 @@ const HowItWorksSection = () => {
 
                 <div className="how-it-works__steps">
                     {howItWorks.map((item, index) => (
-                        <SectionReveal key={item.step} delay={index * 150}>
+                        <SectionReveal key={item.step} delay={index * 120}>
                             <div className="how-it-works__step" id={`step-${item.step}`}>
-                                <div className="how-it-works__step-number-wrapper">
-                                    <span className="how-it-works__step-number">{item.step}</span>
-                                    {index < howItWorks.length - 1 && (
-                                        <div className="how-it-works__step-line" />
-                                    )}
+                                <span className="how-it-works__step-number" aria-hidden="true">
+                                    {String(item.step).padStart(2, '0')}
+                                </span>
+                                <div className="how-it-works__step-body">
+                                    <h3 className="how-it-works__step-title">{t(item.titleKey)}</h3>
+                                    <p className="how-it-works__step-description">{t(item.descriptionKey)}</p>
                                 </div>
-                                <h3 className="how-it-works__step-title">{t(item.titleKey)}</h3>
-                                <p className="how-it-works__step-description">{t(item.descriptionKey)}</p>
                             </div>
                         </SectionReveal>
                     ))}

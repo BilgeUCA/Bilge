@@ -252,7 +252,8 @@ textarea {
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
 }
 
 .section {

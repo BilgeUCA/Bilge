@@ -1,61 +1,70 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Globe } from 'lucide-react';
 import { useLanguage } from '../../i18n/useLanguage';
 
-const PILL_TRANSITION =
-    'transform 250ms cubic-bezier(0.22, 1, 0.36, 1), width 250ms cubic-bezier(0.22, 1, 0.36, 1)';
-
-// Segmented language switcher with a sliding pill behind the active tab.
-// The pill snaps on mount/resize and animates only when the language changes.
+// Compact language switcher: a globe+label button that opens a dropdown on click.
 const LanguageTabs = ({ className = '' }) => {
     const { language, setLanguage, availableLanguages, t } = useLanguage();
-    const tabsRef = useRef(null);
-    const pillRef = useRef(null);
-    const hasMounted = useRef(false);
+    const [open, setOpen] = useState(false);
+    const wrapperRef = useRef(null);
 
-    const place = (animate) => {
-        const tabs = tabsRef.current;
-        const pill = pillRef.current;
-        if (!tabs || !pill) return;
-        const active = tabs.querySelector('[aria-selected="true"]');
-        if (!active) return;
-        if (!animate) pill.style.transition = 'none';
-        pill.style.transform = `translateX(${active.offsetLeft}px)`;
-        pill.style.width = `${active.offsetWidth}px`;
-        if (!animate) {
-            void pill.offsetHeight; // force reflow before re-enabling the transition
-            pill.style.transition = PILL_TRANSITION;
-        }
-    };
-
-    useLayoutEffect(() => {
-        place(hasMounted.current);
-        hasMounted.current = true;
-    }, [language]);
-
-    // Re-snap when the container resizes (fonts loading, drawer layout, window resize)
+    // Close the dropdown when clicking outside
     useEffect(() => {
-        const tabs = tabsRef.current;
-        if (!tabs) return undefined;
-        const observer = new ResizeObserver(() => place(false));
-        observer.observe(tabs);
-        return () => observer.disconnect();
-    }, []);
+        if (!open) return undefined;
+        const handleClick = (e) => {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+        const handleKey = (e) => e.key === 'Escape' && setOpen(false);
+        document.addEventListener('mousedown', handleClick);
+        document.addEventListener('keydown', handleKey);
+        return () => {
+            document.removeEventListener('mousedown', handleClick);
+            document.removeEventListener('keydown', handleKey);
+        };
+    }, [open]);
+
+    const languageNames = t('navbar.languageNames');
 
     return (
-        <div className={`navbar__lang t-tabs ${className}`} ref={tabsRef} role="tablist" aria-label="Language">
-            <span className="t-tabs-pill" ref={pillRef} aria-hidden="true" />
-            {availableLanguages.map((lang) => (
-                <button
-                    key={lang}
-                    type="button"
-                    className="t-tab navbar__lang-btn"
-                    onClick={() => setLanguage(lang)}
-                    aria-selected={language === lang}
-                    role="tab"
-                >
-                    {t('navbar.languageNames')[lang]}
-                </button>
-            ))}
+        <div
+            className={`lang-dropdown ${className}`}
+            ref={wrapperRef}
+        >
+            <button
+                type="button"
+                className="lang-dropdown__trigger"
+                onClick={() => setOpen((prev) => !prev)}
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                aria-label="Select language"
+            >
+                <Globe size={15} aria-hidden="true" />
+                <span>{languageNames[language] ?? language}</span>
+            </button>
+
+            {open && (
+                <ul className="lang-dropdown__menu" role="listbox" aria-label="Language">
+                    {availableLanguages.map((lang) => (
+                        <li key={lang} role="option" aria-selected={language === lang}>
+                            <button
+                                type="button"
+                                className={`lang-dropdown__option ${language === lang ? 'lang-dropdown__option--active' : ''}`}
+                                onClick={() => {
+                                    setLanguage(lang);
+                                    setOpen(false);
+                                }}
+                            >
+                                {languageNames[lang] ?? lang}
+                                {language === lang && (
+                                    <span className="lang-dropdown__check" aria-hidden="true">✓</span>
+                                )}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };

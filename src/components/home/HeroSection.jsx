@@ -181,13 +181,6 @@ const HeroSection = () => {
             <div className="hero__bg-pattern" />
             <div className="container hero__grid">
                 <div className="hero__copy">
-                    <SectionReveal>
-                        <span className="hero__badge">
-                            <span className="hero__badge-dot" />
-                            {t('hero.badge')}
-                        </span>
-                    </SectionReveal>
-
                     <SectionReveal delay={100}>
                         <h1 className="hero__title">
                             {t('hero.titleLead')}{' '}

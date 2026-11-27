@@ -1,4 +1,4 @@
-import { Users, Target, Heart, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import Button from '../components/ui/Button';
 import SectionReveal from '../components/ui/SectionReveal';
 import { useTranslation } from '../i18n/useLanguage';
@@ -6,12 +6,6 @@ import { universities } from '../data/universities';
 import { scholarships } from '../data/scholarships';
 import { SUPPORTED_LANGUAGES } from '../i18n/translations';
 import './AboutPage.css';
-
-const values = [
-    { icon: Target, titleKey: 'accessibilityTitle', descKey: 'accessibilityDesc' },
-    { icon: Users, titleKey: 'communityTitle', descKey: 'communityDesc' },
-    { icon: Heart, titleKey: 'empowermentTitle', descKey: 'empowermentDesc' },
-];
 
 // Real counts from the site's own data
 const stats = [
@@ -60,33 +54,6 @@ const AboutPage = () => {
                 </div>
             </section>
 
-            <section className="about-page__values section">
-                <div className="container">
-                    <SectionReveal>
-                        <h2 className="about-page__section-title">{t('about.ourValues')}</h2>
-                    </SectionReveal>
-                    <div className="about-page__values-grid">
-                        {values.map((value, index) => {
-                            const Icon = value.icon;
-                            return (
-                                <SectionReveal key={value.titleKey} delay={index * 120}>
-                                    <div className="about-value-card">
-                                        <div className="about-value-card__icon">
-                                            <Icon size={24} />
-                                        </div>
-                                        <h3 className="about-value-card__title">
-                                            {t(`about.valuesData.${value.titleKey}`)}
-                                        </h3>
-                                        <p className="about-value-card__description">
-                                            {t(`about.valuesData.${value.descKey}`)}
-                                        </p>
-                                    </div>
-                                </SectionReveal>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
 
             <section className="about-page__team section">
                 <div className="container">
