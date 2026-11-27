@@ -41,11 +41,9 @@ reverse proxy that forwards `/v1` to the API. Alternatively, build with
 
 ### Deploy on Render
 
-The site, the API and the database are deployed together by the Blueprint in the API
-repository ([`render.yaml`](https://github.com/BilgeUCA/bilge-api/blob/main/render.yaml)).
-It builds this repository's `main` branch with `VITE_API_URL` set to the API, and
-redeploys after each push to `main` once the [CI workflow](.github/workflows/ci.yml)
-(lint and build) passes.
+`scripts/deploy-render.py` in the [API repository](https://github.com/BilgeUCA/bilge-api#deploy-to-production)
+builds this checkout with `VITE_API_URL` set to the API and deploys it to Render with
+the API and the database. Keep this repository next to `bilge-api` (`../Bilge`).
 
 ### Deploy to Azure Static Web Apps
 

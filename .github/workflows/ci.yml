@@ -1,6 +1,6 @@
 name: CI
 
-# Render deploys main only after this check passes (autoDeployTrigger: checksPass in bilge-api/render.yaml)
+# Lint and build every pull request and push to main
 on:
   push:
     branches: [main]
