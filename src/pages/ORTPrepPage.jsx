@@ -6,8 +6,10 @@ import SectionReveal from '../components/ui/SectionReveal';
 import OrtPractice from '../components/ort/OrtPractice';
 import { useTranslation } from '../i18n/useLanguage';
 import { useAuth } from '../auth/authContext';
+import LoadState from '../components/ui/LoadState';
+import { useApi } from '../api/useApi';
+import { ORT_RESULTS_KEY } from '../api/localData';
 import { useStoredState } from '../hooks/useStoredState';
-import { ORT_RESULTS_KEY } from '../data/ortPractice';
 import { fmt } from '../utils/format';
 import './ORTPrepPage.css';
 
@@ -43,7 +45,15 @@ const ORTPrepPage = () => {
     const [params, setParams] = useSearchParams();
     const tab = TABS.includes(params.get('tab')) ? params.get('tab') : 'guide';
     const [practiceSubject, setPracticeSubject] = useState(params.get('subject') || 'all');
-    const [results] = useStoredState(ORT_RESULTS_KEY, []);
+    const [localResults] = useStoredState(ORT_RESULTS_KEY, []);
+    // Signed in: the account's history (newest first). Guest: this browser's results.
+    const history = useApi(user && tab === 'progress' ? '/me/ort/attempts?limit=20' : null);
+    const results = user
+        ? (history.data?.items ?? []).map((a) => ({ key: a.id, date: a.date, subject: a.subject, pct: a.percent }))
+        : (Array.isArray(localResults) ? [...localResults] : []).reverse()
+            .map((r) => ({ key: r.date, date: r.date, subject: r.subject, pct: Math.round((r.correct / r.total) * 100) }));
+    const best = user ? history.data?.stats.bestPercent ?? null : results.length ? Math.max(...results.map((r) => r.pct)) : null;
+    const attemptCount = user ? history.data?.stats.count ?? 0 : results.length;
     const [activeSection, setActiveSection] = useState('overview');
 
     const openTab = (next, subject) => {
@@ -116,7 +126,9 @@ const ORTPrepPage = () => {
                 <div className="container ort-page__single">
                     <div className="ort-progress">
                         <h2 className="ort-progress__title">{t('ort.progressTitle')}</h2>
-                        {results.length === 0 ? (
+                        {user && !history.data ? (
+                            <LoadState error={history.error} onRetry={history.reload} />
+                        ) : results.length === 0 ? (
                             <>
                                 <p className="ort-progress__empty">{t('ort.progressEmpty')}</p>
                                 <Button variant="primary" size="md" onClick={() => openTab('practice')}>{t('ort.startDiagnostic')}</Button>
@@ -124,20 +136,16 @@ const ORTPrepPage = () => {
                         ) : (
                             <>
                                 <p className="ort-progress__best">
-                                    {fmt(t('ort.progressBest'), {
-                                        pct: Math.max(...results.map((r) => Math.round((r.correct / r.total) * 100))),
-                                        n: results.length,
-                                    })}
+                                    {fmt(t('ort.progressBest'), { pct: best, n: attemptCount })}
                                 </p>
                                 <ul className="ort-progress__list">
-                                    {[...results].reverse().map((r) => {
-                                        const pct = Math.round((r.correct / r.total) * 100);
+                                    {results.map(({ key, date, subject, pct }) => {
                                         return (
-                                            <li key={r.date} className="ort-progress__row">
+                                            <li key={key} className="ort-progress__row">
                                                 <span className="ort-progress__date">
-                                                    {new Date(r.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                    {new Date(date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                                 </span>
-                                                <span className="ort-progress__subject">{t(`ortPractice.subjects.${r.subject}`)}</span>
+                                                <span className="ort-progress__subject">{t(`ortPractice.subjects.${subject}`)}</span>
                                                 <span className="ort-progress__bar" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>
                                                 <strong className="ort-progress__pct">{pct}%</strong>
                                             </li>

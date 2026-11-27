@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useLanguage';
-import { universities } from '../data/universities';
-import { scholarships } from '../data/scholarships';
+import { useApi } from '../api/useApi';
 import './InfoPages.css';
 
 const SitemapPage = () => {
     const { t } = useTranslation();
+    const universities = useApi('/universities?pageSize=50').data?.items ?? [];
+    const scholarships = useApi('/scholarships').data?.items ?? [];
 
     const groups = [
         {

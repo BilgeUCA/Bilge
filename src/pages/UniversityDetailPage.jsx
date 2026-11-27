@@ -7,10 +7,11 @@ import {
 import SectionReveal from '../components/ui/SectionReveal';
 import UniLogo from '../components/ui/UniLogo';
 import { useTranslation } from '../i18n/useLanguage';
-import { useSavedIds, useStoredState } from '../hooks/useStoredState';
-import { getUniversity, universities } from '../data/universities';
-import { getScholarship } from '../data/scholarships';
-import { getAdmissionStatus, formatMonthDay } from '../utils/admission';
+import LoadState from '../components/ui/LoadState';
+import { useAuth } from '../auth/authContext';
+import { useApi } from '../api/useApi';
+import { useChecklist, useSavedIds } from '../hooks/usePersonalData';
+import { formatMonthDay } from '../utils/admission';
 import { fmt, formatUsd } from '../utils/format';
 import './UniversityDetailPage.css';
 
@@ -38,20 +39,9 @@ const useActiveSection = (ids) => {
 
 const UniversityDetail = ({ id }) => {
     const { t } = useTranslation();
-    const uni = getUniversity(id);
-    const saved = useSavedIds('universities');
-    const [checked, setChecked] = useStoredState(`bilge.checklist.${id}`, []);
-    const [openFaq, setOpenFaq] = useState(0);
-    const [activeTab, setActiveTab] = useActiveSection(SECTIONS);
+    const { data, error, loading, reload } = useApi(`/universities/${encodeURIComponent(id)}`, { keepPrevious: true });
 
-    useEffect(() => {
-        if (uni) document.title = `${uni.shortName} — BILGE`;
-        return () => {
-            document.title = 'BILGE — Higher Education in Kyrgyzstan';
-        };
-    }, [uni]);
-
-    if (!uni) {
+    if (error?.status === 404) {
         return (
             <div className="unidet-page">
                 <div className="container unidet-notfound">
@@ -64,13 +54,32 @@ const UniversityDetail = ({ id }) => {
             </div>
         );
     }
+    if (!data) return <LoadState className="load-state--page" error={error} onRetry={reload} />;
+    return <UniversityView uni={data} stale={loading} />;
+};
 
-    const status = getAdmissionStatus(uni.admissionWindow);
+// Rendered once the data is in, so the section observer finds every section
+const UniversityView = ({ uni, stale }) => {
+    const { t } = useTranslation();
+    const { user } = useAuth();
+    const saved = useSavedIds('universities');
+    const checklist = useChecklist('universities', uni.id, uni.documents, uni.checklist?.checked, stale);
+    const { checked } = checklist;
+    const [openFaq, setOpenFaq] = useState(0);
+    const [activeTab, setActiveTab] = useActiveSection(SECTIONS);
+
+    useEffect(() => {
+        document.title = `${uni.shortName} — BILGE`;
+        return () => {
+            document.title = 'BILGE — Higher Education in Kyrgyzstan';
+        };
+    }, [uni.shortName]);
+
+    const { status } = uni;
     const isSaved = saved.isSaved(uni.id);
-    const relatedScholarships = uni.scholarships.map(getScholarship).filter(Boolean);
-    const similar = universities
-        .filter((u) => u.id !== uni.id && u.country === uni.country)
-        .slice(0, 3);
+    // Expanded by the API: related scholarships and up to 3 universities in the same country
+    const relatedScholarships = uni.scholarships;
+    const { similar } = uni;
 
     const scrollTo = (sectionId) => {
         setActiveTab(sectionId);
@@ -78,8 +87,7 @@ const UniversityDetail = ({ id }) => {
         if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 130, behavior: 'smooth' });
     };
 
-    const toggleDoc = (doc) =>
-        setChecked((prev) => (prev.includes(doc) ? prev.filter((d) => d !== doc) : [...prev, doc]));
+    const toggleDoc = checklist.toggle;
 
     const tuitionText =
         uni.tuitionUsd === null
@@ -234,12 +242,12 @@ const UniversityDetail = ({ id }) => {
                                     {fmt(t('uniDetail.docsProgress'), { done: checked.filter((d) => uni.documents.includes(d)).length, total: uni.documents.length })}
                                 </span>
                             </div>
-                            <p className="unidet-section__hint">{t('uniDetail.docsHint')}</p>
+                            <p className="unidet-section__hint">{t(user ? 'uniDetail.docsHintAccount' : 'uniDetail.docsHint')}</p>
                             <ul className="unidet-checklist">
                                 {uni.documents.map((doc) => (
                                     <li key={doc}>
                                         <label className="unidet-checklist__item">
-                                            <input type="checkbox" checked={checked.includes(doc)} onChange={() => toggleDoc(doc)} />
+                                            <input type="checkbox" checked={checked.includes(doc)} disabled={!checklist.editable} onChange={() => toggleDoc(doc)} />
                                             <span>{doc}</span>
                                         </label>
                                     </li>

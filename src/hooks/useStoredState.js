@@ -51,13 +51,3 @@ export const useStoredState = (key, fallback) => {
 
     return [value, update];
 };
-
-// Saved (bookmarked) ids for universities / scholarships
-export const useSavedIds = (kind) => {
-    const [ids, setIds] = useStoredState(`bilge.saved.${kind}`, []);
-    const toggle = useCallback(
-        (id) => setIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])),
-        [setIds]
-    );
-    return { ids, isSaved: (id) => ids.includes(id), toggle };
-};

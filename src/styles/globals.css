@@ -264,6 +264,33 @@ textarea {
   padding: calc(var(--navbar-height) + var(--spacing-12)) 0 var(--spacing-20);
 }
 
+/* Loading / error placeholder for API data */
+.load-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-12) var(--container-padding);
+  text-align: center;
+  color: var(--color-gray-500);
+}
+
+.load-state--page {
+  min-height: 60vh;
+  justify-content: center;
+  padding-top: calc(var(--navbar-height) + var(--spacing-12));
+}
+
+/* Inline form error from the API */
+.form-error {
+  margin: 0 0 var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  font-size: var(--font-size-sm);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

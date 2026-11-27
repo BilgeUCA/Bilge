@@ -4,6 +4,7 @@ import { Eye, EyeOff, Info } from 'lucide-react';
 import ShakeField from '../components/ui/ShakeField';
 import { useTranslation } from '../i18n/useLanguage';
 import { useAuth } from '../auth/authContext';
+import { authErrorMessage } from '../auth/errors';
 import './LoginPage.css';
 
 const GoogleMark = () => (
@@ -71,8 +72,8 @@ const LoginPage = ({ mode = 'signin' }) => {
             if (isSignUp) await signUp(name.value, email.value, password.value);
             else await signIn(email.value, password.value);
         } catch (err) {
-            const field = err.code === 'wrongPassword' ? 'password' : 'email';
-            fail(field, t(`auth.errors.${err.code}`, t('auth.errors.generic')));
+            const field = err.field in EMPTY ? err.field : err.code === 'wrongPassword' ? 'password' : 'email';
+            fail(field, authErrorMessage(t, err));
         } finally {
             setSubmitting(false);
         }
@@ -165,7 +166,7 @@ const LoginPage = ({ mode = 'signin' }) => {
                             onRevert={() => clearError('password')}
                             labelAside={
                                 !isSignUp && (
-                                    <Link to="/contact?topic=account" className="auth-field__aside">
+                                    <Link to="/forgot-password" className="auth-field__aside">
                                         {t('auth.forgot')}
                                     </Link>
                                 )

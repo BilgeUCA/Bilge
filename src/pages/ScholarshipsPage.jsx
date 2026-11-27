@@ -3,9 +3,12 @@ import { Search, Bookmark, Calendar, Globe, Award, ArrowRight, Briefcase, FileCh
 import SectionReveal from '../components/ui/SectionReveal';
 import UniLogo from '../components/ui/UniLogo';
 import { useTranslation } from '../i18n/useLanguage';
-import { useSavedIds } from '../hooks/useStoredState';
-import { scholarships, DESTINATIONS, LEVELS, FUNDING } from '../data/scholarships';
-import { getAdmissionStatus, formatMonthDay } from '../utils/admission';
+import LoadState from '../components/ui/LoadState';
+import { useAuth } from '../auth/authContext';
+import { useApi } from '../api/useApi';
+import { useSavedIds } from '../hooks/usePersonalData';
+import { useDebounced } from '../hooks/useDebounced';
+import { formatMonthDay } from '../utils/admission';
 import { fmt } from '../utils/format';
 import './ScholarshipsPage.css';
 
@@ -25,8 +28,11 @@ const META_ICONS = {
 
 const ScholarshipsPage = () => {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [params, setParams] = useSearchParams();
     const saved = useSavedIds('scholarships');
+    const { data: options } = useApi('/scholarships/filters');
+    const { data: all } = useApi('/scholarships');
 
     const query = params.get('q') || '';
     const destination = params.get('destination') || '';
@@ -41,24 +47,25 @@ const ScholarshipsPage = () => {
         setParams(next, { replace: true });
     };
 
-    const filtered = scholarships.filter((s) => {
-        const q = query.trim().toLowerCase();
-        if (q) {
-            const haystack = [s.name, s.shortName, s.provider, s.summary, t(`scholarships.countries.${s.countryKey}`), t(`scholarships.types.${s.typeKey}`)]
-                .join(' ')
-                .toLowerCase();
-            if (!haystack.includes(q)) return false;
-        }
-        if (destination && s.countryKey !== destination) return false;
-        // "Bachelor/Master" programs also match a Master's or Undergraduate search
-        if (level) {
-            const matchesCombined = s.typeKey === 'Bachelor/Master' && (level === "Master's" || level === 'Undergraduate');
-            if (s.typeKey !== level && !matchesCombined) return false;
-        }
-        if (funding && s.fundingKey !== funding) return false;
-        if (savedOnly && !saved.ids.includes(s.id)) return false;
-        return true;
-    });
+    // The server searches the translated country and type labels too; guests'
+    // saved items live in this browser, so "Saved only" filters here for them.
+    const searchTerm = useDebounced(query.trim());
+    const apiQuery = new URLSearchParams();
+    if (searchTerm) apiQuery.set('q', searchTerm);
+    if (destination) apiQuery.set('destination', destination);
+    if (level) apiQuery.set('level', level);
+    if (funding) apiQuery.set('funding', funding);
+    if (savedOnly && user) apiQuery.set('saved', '1');
+    const search = apiQuery.toString();
+    const results = useApi(search ? `/scholarships?${search}` : '/scholarships', { keepPrevious: true });
+    // A value the API doesn't know (an old or edited link) matches nothing; it isn't a load failure
+    const loadError = results.error?.code === 'validation' ? null : results.error;
+    const filtered = (results.data?.items ?? []).filter((s) => !savedOnly || user || saved.ids.includes(s.id));
+
+    const toggleSave = async (id) => {
+        await saved.toggle(id);
+        if (savedOnly && user) results.reload();
+    };
 
     const hasFilters = Boolean(query || destination || level || funding || savedOnly);
 
@@ -102,7 +109,7 @@ const ScholarshipsPage = () => {
                                     <span className="sr-only">{t('scholarships.destination')}</span>
                                     <select value={destination} onChange={(e) => update('destination', e.target.value)}>
                                         <option value="">{t('scholarships.destinationAll')}</option>
-                                        {DESTINATIONS.map((d) => (
+                                        {(options?.destinations ?? []).map((d) => (
                                             <option key={d} value={d}>{t(`scholarships.countries.${d}`)}</option>
                                         ))}
                                     </select>
@@ -111,7 +118,7 @@ const ScholarshipsPage = () => {
                                     <span className="sr-only">{t('scholarships.level')}</span>
                                     <select value={level} onChange={(e) => update('level', e.target.value)}>
                                         <option value="">{t('scholarships.levelAll')}</option>
-                                        {LEVELS.map((l) => (
+                                        {(options?.levels ?? []).map((l) => (
                                             <option key={l} value={l}>{t(`scholarships.types.${l}`)}</option>
                                         ))}
                                     </select>
@@ -120,7 +127,7 @@ const ScholarshipsPage = () => {
                                     <span className="sr-only">{t('scholarships.fundingLabel')}</span>
                                     <select value={funding} onChange={(e) => update('funding', e.target.value)}>
                                         <option value="">{t('scholarships.fundingAny')}</option>
-                                        {FUNDING.map((f) => (
+                                        {(options?.funding ?? []).map((f) => (
                                             <option key={f} value={f}>{t(`scholarships.funding.${f}`)}</option>
                                         ))}
                                     </select>
@@ -143,16 +150,18 @@ const ScholarshipsPage = () => {
             <section className="sch-page__list">
                 <div className="container">
                     <p className="sch-page__count" aria-live="polite">
-                        {fmt(t('scholarships.countText'), { n: filtered.length, total: scholarships.length })}
+                        {fmt(t('scholarships.countText'), { n: filtered.length, total: all?.total ?? 0 })}
                         {hasFilters && (
                             <button type="button" className="sch-page__clear" onClick={() => setParams({}, { replace: true })}>
                                 {t('universitiesPage.clearAll')}
                             </button>
                         )}
                     </p>
-                    <div className="sch-page__grid">
+                    {results.loading && !results.data && <LoadState />}
+                    {loadError && <LoadState error={loadError} onRetry={results.reload} />}
+                    <div className="sch-page__grid" aria-busy={results.loading}>
                         {filtered.map((sch, index) => {
-                            const status = getAdmissionStatus(sch.window);
+                            const { status } = sch;
                             const isSaved = saved.isSaved(sch.id);
                             const MetaIcon = META_ICONS[sch.meta.labelKey] || Globe;
                             return (
@@ -166,7 +175,7 @@ const ScholarshipsPage = () => {
                                             <button
                                                 type="button"
                                                 className={`sch-card__bookmark ${isSaved ? 'sch-card__bookmark--active' : ''}`}
-                                                onClick={() => saved.toggle(sch.id)}
+                                                onClick={() => toggleSave(sch.id)}
                                                 aria-pressed={isSaved}
                                                 aria-label={`${isSaved ? t('common.unsave') : t('common.save')}: ${sch.name}`}
                                             >
@@ -218,7 +227,7 @@ const ScholarshipsPage = () => {
                         })}
                     </div>
 
-                    {filtered.length === 0 && (
+                    {!results.loading && !loadError && filtered.length === 0 && (
                         <div className="sch-page__empty">
                             <p>{t('scholarships.emptyMessage')}</p>
                             <button type="button" className="uni-page__empty-btn" onClick={() => setParams({}, { replace: true })}>

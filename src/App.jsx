@@ -8,6 +8,7 @@ import ScholarshipsPage from './pages/ScholarshipsPage';
 import ScholarshipDetailPage from './pages/ScholarshipDetailPage';
 import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
+import PasswordResetPage from './pages/PasswordResetPage';
 import AccountPage from './pages/AccountPage';
 import ContactPage from './pages/ContactPage';
 import LegalPage from './pages/LegalPage';
@@ -27,6 +28,8 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage key="signin" mode="signin" />} />
         <Route path="/signup" element={<LoginPage key="signup" mode="signup" />} />
+        <Route path="/forgot-password" element={<PasswordResetPage key="forgot" />} />
+        <Route path="/reset-password" element={<PasswordResetPage key="reset" />} />
         <Route path="/account" element={<AccountPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/terms" element={<LegalPage doc="terms" />} />
