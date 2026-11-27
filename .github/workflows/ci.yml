@@ -1,0 +1,22 @@
+name: CI
+
+# Render deploys main only after this check passes (autoDeployTrigger: checksPass in bilge-api/render.yaml)
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+        env:
+          VITE_API_URL: https://bilge-api.onrender.com/v1

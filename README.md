@@ -39,6 +39,14 @@ reverse proxy that forwards `/v1` to the API. Alternatively, build with
 `VITE_API_URL=https://api.example.com/v1` and add that origin to the API's
 `Cors__AllowedOrigins`.
 
+### Deploy on Render
+
+The site, the API and the database are deployed together by the Blueprint in the API
+repository ([`render.yaml`](https://github.com/BilgeUCA/bilge-api/blob/main/render.yaml)).
+It builds this repository's `main` branch with `VITE_API_URL` set to the API, and
+redeploys after each push to `main` once the [CI workflow](.github/workflows/ci.yml)
+(lint and build) passes.
+
 ### Deploy to Azure Static Web Apps
 
 1. Create a Static Web App connected to this repository. In the build settings, use
