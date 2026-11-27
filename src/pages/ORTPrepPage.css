@@ -63,11 +63,12 @@
 }
 
 /* ===== Layout ===== */
-.ort-page__layout {
+.ort-page__layout,
+.container.ort-page__layout {
     display: grid;
     grid-template-columns: 200px 1fr;
     gap: var(--spacing-10);
-    padding-top: var(--spacing-8);
+    padding-top: var(--spacing-10);
     padding-bottom: var(--spacing-16);
     align-items: start;
 }
@@ -694,9 +695,10 @@
     }
 }
 /* ===== Tabs content: practice + progress ===== */
-.ort-page__single {
+.ort-page__single,
+.container.ort-page__single {
     max-width: 820px;
-    padding-top: var(--spacing-8);
+    padding-top: var(--spacing-10);
     padding-bottom: var(--spacing-16);
 }
 

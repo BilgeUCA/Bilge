@@ -405,16 +405,23 @@ const UniversitiesPage = () => {
                                                     <BookOpen size={14} aria-hidden="true" />
                                                     <div className="uni-card__detail-content">
                                                         <span className="uni-card__detail-label">{t('universitiesPage.cardLabels.majors')}</span>
-                                                        <span className="uni-card__detail-value">{uni.majors.slice(0, 3).join(', ')}</span>
+                                                        <span className="uni-card__detail-value">
+                                                            {uni.majors.slice(0, 2).join(', ')}{uni.majors.length > 2 ? ', …' : ''}
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div className="uni-card__bottom">
                                                     <div className="uni-card__languages">
-                                                        {uni.languages.map((lang) => (
+                                                        {uni.languages.slice(0, 2).map((lang) => (
                                                             <span key={lang} className="uni-card__lang-tag" title={t(`universitiesPage.languages.${lang}`)}>
                                                                 {lang.slice(0, 2).toUpperCase()}
                                                             </span>
                                                         ))}
+                                                        {uni.languages.length > 2 && (
+                                                            <span className="uni-card__lang-more" title={uni.languages.slice(2).map((l) => l.slice(0, 2).toUpperCase()).join(', ')}>
+                                                                +{uni.languages.length - 2}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <span className={`uni-card__deadline ${uni.status.state === 'open' ? 'uni-card__deadline--success' : ''}`}>
                                                         {renderStatus(uni.status)}
